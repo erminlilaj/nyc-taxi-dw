@@ -36,10 +36,10 @@ Status flags: `[ done ]` `[ in progress ]` `[ pending ]` `[ blocked ]`
 
 | # | Step | Status |
 |---|------|--------|
-| 3.1 | Write `etl/clean.py` applying all cleaning rules (nulls, ranges, trip_duration) | `[ pending ]` |
-| 3.2 | Run `clean.py` and compare before/after row counts | `[ pending ]` |
-| 3.3 | Verify cleaned output files are written to `data/clean/` | `[ pending ]` |
-| 3.4 | Confirm expected row count (~8–9 M rows survive cleaning) | `[ pending ]` |
+| 3.1 | Write `etl/clean.py` applying all cleaning rules (nulls, ranges, trip_duration) | `[ done ]` |
+| 3.2 | Run `clean.py` and compare before/after row counts | `[ done ]` |
+| 3.3 | Verify cleaned output files are written to `data/clean/` | `[ done ]` |
+| 3.4 | Confirm expected row count (~8–9 M rows survive cleaning) | `[ done ]` |
 
 **Cleaning rules summary:**
 

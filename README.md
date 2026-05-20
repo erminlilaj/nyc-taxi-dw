@@ -4,7 +4,31 @@
 **Dataset:** NYC TLC Yellow Taxi Trip Records — January, February, March 2024
 **Stack:** PostgreSQL 16 · Python 3.10+ · pandas · SQLAlchemy · matplotlib/seaborn
 
-A star-schema data warehouse built on ~8–9 million taxi trip records, with a full ETL pipeline, 12 OLAP queries, and 6 visualizations.
+A star-schema data warehouse built on ~8.4 million taxi trip records, with a full ETL pipeline, 12 OLAP queries, and 6 visualizations.
+
+---
+
+## Dataset Statistics
+
+### Raw data (downloaded)
+
+| File | Rows | Size |
+|------|------|------|
+| `yellow_tripdata_2024-01.parquet` | 2,964,624 | 47.6 MB |
+| `yellow_tripdata_2024-02.parquet` | 3,007,526 | 48.0 MB |
+| `yellow_tripdata_2024-03.parquet` | 3,582,628 | 57.3 MB |
+| **Total raw** | **9,554,778** | **152.9 MB** |
+
+### After cleaning
+
+| File | Rows kept | Dropped | Drop rate |
+|------|-----------|---------|-----------|
+| January 2024  | 2,713,605 | 251,019 | 8.5% |
+| February 2024 | 2,709,893 | 297,633 | 9.9% |
+| March 2024    | 3,024,567 | 558,061 | 15.6% |
+| **Total clean** | **8,448,065** | **1,106,713** | **11.6%** |
+
+Rows are dropped for: null timestamps or location IDs, zero/negative fares, implausible trip distances (>200 mi), trip durations outside 1–300 minutes, or passenger counts outside 1–6.
 
 ---
 
