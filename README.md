@@ -4,7 +4,7 @@
 **Dataset:** NYC TLC Yellow Taxi Trip Records — January, February, March 2024
 **Stack:** PostgreSQL 16 · Python 3.10+ · pandas · SQLAlchemy · matplotlib/seaborn
 
-A star-schema data warehouse built on ~8.4 million taxi trip records, with a full ETL pipeline, 12 OLAP queries, and 6 visualizations.
+A data warehouse project in progress. Setup, data acquisition, and cleaning are complete; the PostgreSQL star schema, load script, OLAP queries, visualizations, diagrams, and report are the next phases.
 
 ---
 
@@ -23,12 +23,12 @@ A star-schema data warehouse built on ~8.4 million taxi trip records, with a ful
 
 | File | Rows kept | Dropped | Drop rate |
 |------|-----------|---------|-----------|
-| January 2024  | 2,713,605 | 251,019 | 8.5% |
-| February 2024 | 2,709,893 | 297,633 | 9.9% |
-| March 2024    | 3,024,567 | 558,061 | 15.6% |
-| **Total clean** | **8,448,065** | **1,106,713** | **11.6%** |
+| January 2024  | 2,713,591 | 251,033 | 8.5% |
+| February 2024 | 2,709,891 | 297,635 | 9.9% |
+| March 2024    | 3,024,564 | 558,064 | 15.6% |
+| **Total clean** | **8,448,046** | **1,106,732** | **11.6%** |
 
-Rows are dropped for: null timestamps or location IDs, zero/negative fares, implausible trip distances (>200 mi), trip durations outside 1–300 minutes, or passenger counts outside 1–6.
+Rows are dropped for: null timestamps or location IDs, pickup timestamps outside January-March 2024, zero/negative fares, implausible trip distances (>200 mi), trip durations outside 1–300 minutes, or passenger counts outside 1–6.
 
 ---
 
@@ -67,7 +67,7 @@ pip install -r requirements.txt
 
 ## Running the ETL Pipeline
 
-Run these steps in order:
+Run these steps in order. Steps 1 and 2 are implemented now; steps 3 and 4 depend on the pending `sql/ddl.sql` and `etl/load.py` files.
 
 ```bash
 # 1. Download raw Parquet files (~500 MB)
@@ -94,7 +94,7 @@ docker exec -it nyc_taxi_postgres psql -U taxi -d nyc_taxi_dw -c "SELECT COUNT(*
 
 ## OLAP Queries
 
-All 12 queries are in `sql/olap_queries.sql`, covering rollup, drill-down, slice, dice, ranking, and window operations.
+The planned OLAP queries will live in `sql/olap_queries.sql`, covering rollup, drill-down, slice, dice, ranking, and window operations.
 
 Run them interactively:
 
@@ -112,7 +112,7 @@ Export a query result to CSV (inside psql):
 
 ## Visualizations
 
-After exporting all query CSVs:
+After `sql/olap_queries.sql` and `viz/charts.py` are implemented, export all query CSVs and generate charts:
 
 ```bash
 python viz/charts.py
@@ -158,15 +158,15 @@ nyc-taxi-dw/
 ├── etl/
 │   ├── download.py         ← fetch raw Parquet files
 │   ├── clean.py            ← cleaning & transformation
-│   └── load.py             ← populate all DB tables
+│   └── load.py             ← pending: populate all DB tables
 ├── sql/
-│   ├── ddl.sql             ← CREATE TABLE statements
-│   └── olap_queries.sql    ← 12 OLAP queries
+│   ├── ddl.sql             ← pending: CREATE TABLE statements
+│   └── olap_queries.sql    ← pending: 12 OLAP queries
 ├── viz/
-│   └── charts.py           ← generate 6 PNG charts
+│   └── charts.py           ← pending: generate 6 PNG charts
 ├── diagrams/
-│   ├── dfm.png             ← Dimensional Fact Model
-│   └── er.png              ← Entity-Relationship diagram
+│   ├── dfm.png             ← pending: Dimensional Fact Model
+│   └── er.png              ← pending: Entity-Relationship diagram
 ├── output/charts/          ← generated PNGs (git-ignored)
 ├── data/raw/               ← Parquet files (git-ignored)
 └── data/clean/             ← cleaned data (git-ignored)

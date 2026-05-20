@@ -4,6 +4,9 @@ import pandas as pd
 RAW_DIR   = os.path.join(os.path.dirname(__file__), "..", "data", "raw")
 CLEAN_DIR = os.path.join(os.path.dirname(__file__), "..", "data", "clean")
 
+PICKUP_START = pd.Timestamp("2024-01-01")
+PICKUP_END = pd.Timestamp("2024-04-01")
+
 PARQUET_FILES = [
     "yellow_tripdata_2024-01.parquet",
     "yellow_tripdata_2024-02.parquet",
@@ -26,12 +29,18 @@ def clean(df: pd.DataFrame, filename: str) -> pd.DataFrame:
         "PULocationID", "DOLocationID",
     ])
 
+    # Keep the analysis window aligned with the selected Jan-Mar 2024 files.
+    df = df[
+        (df["tpep_pickup_datetime"] >= PICKUP_START)
+        & (df["tpep_pickup_datetime"] < PICKUP_END)
+    ]
+
     # numeric range filters
     df = df[df["trip_distance"].between(0, 200, inclusive="neither")]
     df = df[df["fare_amount"].between(0, 500, inclusive="neither")]
     df = df[df["total_amount"] > 0]
     df = df[df["passenger_count"].between(1, 6)]
-    df = df[df["trip_duration"].between(1, 300)]
+    df = df[df["trip_duration"].between(1, 300)].copy()
 
     # fill nullable measure
     df["tip_amount"] = df["tip_amount"].fillna(0)

@@ -26,7 +26,7 @@ Status flags: `[ done ]` `[ in progress ]` `[ pending ]` `[ blocked ]`
 
 | # | Step | Status |
 |---|------|--------|
-| 2.1 | Write `etl/download.py` to fetch the 3 Parquet files and `zones.csv` | `[ done ]` |
+| 2.1 | Write `etl/download.py` to fetch the 3 Parquet files and `taxi_zone_lookup.csv` | `[ done ]` |
 | 2.2 | Run `download.py` and verify all 4 files land in `data/raw/` | `[ done ]` |
 | 2.3 | Spot-check raw row counts (~9–10 M total across 3 months) | `[ done ]` |
 
@@ -36,7 +36,7 @@ Status flags: `[ done ]` `[ in progress ]` `[ pending ]` `[ blocked ]`
 
 | # | Step | Status |
 |---|------|--------|
-| 3.1 | Write `etl/clean.py` applying all cleaning rules (nulls, ranges, trip_duration) | `[ done ]` |
+| 3.1 | Write `etl/clean.py` applying all cleaning rules (nulls, date scope, ranges, trip_duration) | `[ done ]` |
 | 3.2 | Run `clean.py` and compare before/after row counts | `[ done ]` |
 | 3.3 | Verify cleaned output files are written to `data/clean/` | `[ done ]` |
 | 3.4 | Confirm expected row count (~8–9 M rows survive cleaning) | `[ done ]` |
@@ -44,6 +44,7 @@ Status flags: `[ done ]` `[ in progress ]` `[ pending ]` `[ blocked ]`
 **Cleaning rules summary:**
 
 - Drop rows where `tpep_pickup_datetime`, `tpep_dropoff_datetime`, `PULocationID`, or `DOLocationID` is null
+- Keep pickup timestamps from `2024-01-01` inclusive to `2024-04-01` exclusive
 - Keep `trip_distance` between 0 and 200
 - Keep `fare_amount` between 0 and 500
 - Keep `total_amount` > 0
@@ -79,8 +80,8 @@ Status flags: `[ done ]` `[ in progress ]` `[ pending ]` `[ blocked ]`
 | 5.1 | Write `etl/load.py` — load all dimensions then FactTrip | `[ pending ]` |
 | 5.2 | Load `DimPayment` (6 static rows) | `[ pending ]` |
 | 5.3 | Load `DimService` (2 static rows) | `[ pending ]` |
-| 5.4 | Load `DimPickupLocation` from `zones.csv` | `[ pending ]` |
-| 5.5 | Load `DimDropoffLocation` from `zones.csv` | `[ pending ]` |
+| 5.4 | Load `DimPickupLocation` from `taxi_zone_lookup.csv` | `[ pending ]` |
+| 5.5 | Load `DimDropoffLocation` from `taxi_zone_lookup.csv` | `[ pending ]` |
 | 5.6 | Build and load `DimTime` from pickup timestamps (deduplicated) | `[ pending ]` |
 | 5.7 | Load `FactTrip` in chunks of 100,000 rows | `[ pending ]` |
 | 5.8 | Verify `SELECT COUNT(*) FROM FactTrip` returns 8,000,000+ | `[ pending ]` |
