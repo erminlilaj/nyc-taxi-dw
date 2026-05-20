@@ -58,18 +58,18 @@ Status flags: `[ done ]` `[ in progress ]` `[ pending ]` `[ blocked ]`
 
 | # | Step | Status |
 |---|------|--------|
-| 4.1 | Write `sql/ddl.sql` with all 6 `CREATE TABLE` statements | `[ pending ]` |
-| 4.2 | Apply DDL: `docker exec -i nyc_taxi_postgres psql -U taxi -d nyc_taxi_dw < sql/ddl.sql` | `[ pending ]` |
-| 4.3 | Verify all 6 tables exist with `\dt` in psql | `[ pending ]` |
+| 4.1 | Write `sql/ddl.sql` with all 6 `CREATE TABLE` statements | `[ done ]` |
+| 4.2 | Apply DDL: `docker exec -i nyc_taxi_postgres psql -U taxi -d nyc_taxi_dw < sql/ddl.sql` | `[ done ]` |
+| 4.3 | Verify all 6 tables exist with `\dt` in psql | `[ done ]` |
 
-**Tables to create:**
+**Tables created:**
 
-- `DimTime` — `time_id`, year, quarter, month, day, hour, day_of_week, is_weekend
-- `DimPickupLocation` — `location_id`, zone, borough, city
-- `DimDropoffLocation` — `location_id`, zone, borough, city
-- `DimPayment` — `payment_id`, payment_type, payment_category
-- `DimService` — `service_id`, vendor_id, vendor_name, service_type
-- `FactTrip` — `trip_id`, `time_id`, `pickup_location_id`, `dropoff_location_id`, `payment_id`, `service_id`, fare_amount, tip_amount, total_amount, trip_distance, passenger_count, trip_duration
+- `dim_time` — `time_id`, pickup_date, year, quarter, month, day, hour, day_of_week, is_weekend
+- `dim_pickup_location` — `location_id`, zone, borough, city
+- `dim_dropoff_location` — `location_id`, zone, borough, city
+- `dim_payment` — `payment_id`, payment_type, payment_category
+- `dim_service` — `service_id`, vendor_id, vendor_name, service_type
+- `fact_trip` — `trip_id`, `time_id`, `pickup_location_id`, `dropoff_location_id`, `payment_id`, `service_id`, fare_amount, tip_amount, total_amount, trip_distance, passenger_count, trip_duration
 
 ---
 
