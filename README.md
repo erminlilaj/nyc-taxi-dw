@@ -4,7 +4,7 @@
 **Dataset:** NYC TLC Yellow Taxi Trip Records — January, February, March 2024
 **Stack:** PostgreSQL 16 · Python 3.10+ · pandas · SQLAlchemy · matplotlib/seaborn
 
-A data warehouse project in progress. Setup, data acquisition, cleaning, and PostgreSQL schema creation are complete; the load script, OLAP queries, visualizations, diagrams, and report are the next phases.
+A data warehouse project in progress. Setup, data acquisition, cleaning, PostgreSQL schema creation, and warehouse loading are complete; OLAP queries, visualizations, diagrams, and the report are the next phases.
 
 ---
 
@@ -67,7 +67,7 @@ pip install -r requirements.txt
 
 ## Running the ETL Pipeline
 
-Run these steps in order. Steps 1-3 are implemented now; step 4 depends on the pending `etl/load.py` file.
+Run these steps in order. Steps 1-4 are implemented.
 
 ```bash
 # 1. Download raw Parquet files (~500 MB)
@@ -86,8 +86,8 @@ python etl/load.py
 ### Verify the load
 
 ```bash
-docker exec -it nyc_taxi_postgres psql -U taxi -d nyc_taxi_dw -c "SELECT COUNT(*) FROM FactTrip;"
-# Expected: 8,000,000+
+docker exec -it nyc_taxi_postgres psql -U taxi -d nyc_taxi_dw -c "SELECT COUNT(*) FROM fact_trip;"
+# Expected: 8,448,046
 ```
 
 ---
@@ -158,7 +158,7 @@ nyc-taxi-dw/
 ├── etl/
 │   ├── download.py         ← fetch raw Parquet files
 │   ├── clean.py            ← cleaning & transformation
-│   └── load.py             ← pending: populate all DB tables
+│   └── load.py             ← populate all DB tables
 ├── sql/
 │   ├── ddl.sql             ← CREATE TABLE statements
 │   └── olap_queries.sql    ← pending: 12 OLAP queries

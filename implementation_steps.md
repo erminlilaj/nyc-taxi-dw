@@ -77,14 +77,23 @@ Status flags: `[ done ]` `[ in progress ]` `[ pending ]` `[ blocked ]`
 
 | # | Step | Status |
 |---|------|--------|
-| 5.1 | Write `etl/load.py` — load all dimensions then FactTrip | `[ pending ]` |
-| 5.2 | Load `DimPayment` (6 static rows) | `[ pending ]` |
-| 5.3 | Load `DimService` (2 static rows) | `[ pending ]` |
-| 5.4 | Load `DimPickupLocation` from `taxi_zone_lookup.csv` | `[ pending ]` |
-| 5.5 | Load `DimDropoffLocation` from `taxi_zone_lookup.csv` | `[ pending ]` |
-| 5.6 | Build and load `DimTime` from pickup timestamps (deduplicated) | `[ pending ]` |
-| 5.7 | Load `FactTrip` in chunks of 100,000 rows | `[ pending ]` |
-| 5.8 | Verify `SELECT COUNT(*) FROM FactTrip` returns 8,000,000+ | `[ pending ]` |
+| 5.1 | Write `etl/load.py` — load all dimensions then FactTrip | `[ done ]` |
+| 5.2 | Load `DimPayment` (6 static rows) | `[ done ]` |
+| 5.3 | Load `DimService` (2 static rows) | `[ done ]` |
+| 5.4 | Load `DimPickupLocation` from `taxi_zone_lookup.csv` | `[ done ]` |
+| 5.5 | Load `DimDropoffLocation` from `taxi_zone_lookup.csv` | `[ done ]` |
+| 5.6 | Build and load `DimTime` from pickup timestamps (deduplicated) | `[ done ]` |
+| 5.7 | Load `FactTrip` in chunks of 100,000 rows | `[ done ]` |
+| 5.8 | Verify `SELECT COUNT(*) FROM fact_trip` returns 8,000,000+ | `[ done ]` |
+
+**Loaded row counts:**
+
+- `dim_payment`: 6
+- `dim_service`: 2
+- `dim_pickup_location`: 265
+- `dim_dropoff_location`: 265
+- `dim_time`: 2,183
+- `fact_trip`: 8,448,046
 
 ---
 
@@ -155,7 +164,7 @@ All queries go in `sql/olap_queries.sql`.
 |---|-------|--------|
 | 10.1 | `docker compose ps` — both services Up | `[ pending ]` |
 | 10.2 | `\dt` in psql — 6 tables listed | `[ pending ]` |
-| 10.3 | `SELECT COUNT(*) FROM FactTrip` — 8M+ rows | `[ pending ]` |
+| 10.3 | `SELECT COUNT(*) FROM fact_trip` — 8M+ rows | `[ pending ]` |
 | 10.4 | `ls output/charts/` — 6 PNG files present | `[ pending ]` |
 | 10.5 | All 12 OLAP queries run without errors | `[ pending ]` |
 | 10.6 | Report is complete and diagrams are embedded | `[ pending ]` |
