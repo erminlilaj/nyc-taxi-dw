@@ -15,10 +15,13 @@ data/clean/
 *.parquet
 
 # Zone lookup is small — optionally commit it
-# !data/raw/zones.csv
+# !data/raw/taxi_zone_lookup.csv
 
 # Generated output
 output/
+!output/
+!output/charts/
+!output/charts/.gitkeep
 
 # CSV exports from OLAP queries
 *.csv
@@ -29,3 +32,12 @@ Thumbs.db
 .idea/
 .vscode/
 *.swp
+
+# LaTeX build artifacts
+*.aux
+*.log
+*.out
+*.toc
+*.fls
+*.fdb_latexmk
+*.synctex.gz

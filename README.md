@@ -113,21 +113,43 @@ ls output/result_q*.csv    # result_q1.csv ... result_q12.csv
 
 ## Visualizations
 
-After `sql/olap_queries.sql` and `viz/charts.py` are implemented, export all query CSVs and generate charts:
+Use **Power BI** for the final visualizations. Recommended input: import the exported OLAP CSV files from `output/` instead of importing the full `fact_trip` table. The CSVs are smaller, already aggregated, and directly match the required charts.
 
 ```bash
-python viz/charts.py
-ls output/charts/    # 6 PNG files
+python etl/export_olap_results.py
+ls output/result_q*.csv
 ```
 
-| Chart file                   | Description                        |
-|------------------------------|------------------------------------|
-| `01_revenue_by_month.png`    | Total revenue — Jan / Feb / Mar    |
-| `02_demand_by_hour.png`      | Weekday vs weekend demand by hour  |
-| `03_top10_zones.png`         | Top 10 pickup zones by trip count  |
-| `04_tip_by_payment.png`      | Avg tip % by payment type          |
-| `05_duration_by_borough.png` | Avg trip duration by borough       |
-| `06_heatmap_hour_dow.png`    | Heatmap — hour × day of week       |
+| Power BI visual | Source CSV | Suggested chart |
+|-----------------|------------|-----------------|
+| Revenue by month | `output/result_q2.csv` | Column/bar chart |
+| Weekday vs weekend demand by hour | `output/result_q7.csv` | Line chart |
+| Top 10 pickup zones | `output/result_q9.csv` | Horizontal bar chart |
+| Tip percentage by payment type | `output/result_q10.csv` | Bar or pie chart |
+| Trip duration by borough | `output/result_q4.csv` | Bar chart |
+| Hour by day-of-week demand | `output/result_q7.csv` | Matrix heatmap |
+
+Optional: connect Power BI directly to PostgreSQL at `localhost:5433`, database `nyc_taxi_dw`, user/password `taxi`/`taxi`. Use this only if you need interactive exploration beyond the exported OLAP results.
+
+---
+
+## Demo Flow
+
+Use this sequence for a short project demonstration:
+
+```bash
+docker compose ps
+docker exec -it nyc_taxi_postgres psql -U taxi -d nyc_taxi_dw -c "\dt"
+docker exec -it nyc_taxi_postgres psql -U taxi -d nyc_taxi_dw -c "SELECT COUNT(*) FROM fact_trip;"
+docker exec -i nyc_taxi_postgres psql -U taxi -d nyc_taxi_dw < sql/olap_queries.sql
+```
+
+Then show:
+
+- Power BI dashboard built from `output/result_q*.csv`
+- `docs/data_model.md` for the star schema explanation
+- `docs/validation.md` for row-count checks
+- `docs/report.md` as the living report draft
 
 ---
 
@@ -164,12 +186,18 @@ nyc-taxi-dw/
 ├── sql/
 │   ├── ddl.sql             ← CREATE TABLE statements
 │   └── olap_queries.sql    ← 12 OLAP queries
-├── viz/
-│   └── charts.py           ← pending: generate 6 PNG charts
+├── docs/
+│   ├── data_model.md       ← star schema and cleaning notes
+│   ├── validation.md       ← row-count checks
+│   ├── powerbi_notes.md    ← Power BI chart mapping
+│   ├── report.md           ← report draft
+│   ├── figures/            ← report figures
+│   └── report/             ← final report source
+├── output/result_q*.csv    ← OLAP exports for Power BI (git-ignored)
+├── output/charts/          ← exported Power BI chart images (git-ignored)
 ├── diagrams/
 │   ├── dfm.png             ← pending: Dimensional Fact Model
 │   └── er.png              ← pending: Entity-Relationship diagram
-├── output/charts/          ← generated PNGs (git-ignored)
 ├── data/raw/               ← Parquet files (git-ignored)
 └── data/clean/             ← cleaned data (git-ignored)
 ```
