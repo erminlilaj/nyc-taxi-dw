@@ -4,7 +4,7 @@
 **Dataset:** NYC TLC Yellow Taxi Trip Records — January, February, March 2024
 **Stack:** PostgreSQL 16 · Python 3.10+ · pandas · SQLAlchemy · matplotlib/seaborn
 
-A data warehouse project in progress. Setup, data acquisition, cleaning, PostgreSQL schema creation, and warehouse loading are complete; OLAP queries, visualizations, diagrams, and the report are the next phases.
+A data warehouse project in progress. Setup, data acquisition, cleaning, PostgreSQL schema creation, warehouse loading, and OLAP query exports are complete; visualizations, diagrams, and the report are the next phases.
 
 ---
 
@@ -94,18 +94,19 @@ docker exec -it nyc_taxi_postgres psql -U taxi -d nyc_taxi_dw -c "SELECT COUNT(*
 
 ## OLAP Queries
 
-The planned OLAP queries will live in `sql/olap_queries.sql`, covering rollup, drill-down, slice, dice, ranking, and window operations.
+The 12 OLAP queries live in `sql/olap_queries.sql`, covering rollup, drill-down, slice, dice, ranking, and window operations.
 
 Run them interactively:
 
 ```bash
-docker exec -it nyc_taxi_postgres psql -U taxi -d nyc_taxi_dw -f sql/olap_queries.sql
+docker exec -i nyc_taxi_postgres psql -U taxi -d nyc_taxi_dw < sql/olap_queries.sql
 ```
 
-Export a query result to CSV (inside psql):
+Export all query results to CSV for charts:
 
-```sql
-\copy (SELECT ...) TO 'output/result_q1.csv' CSV HEADER;
+```bash
+python etl/export_olap_results.py
+ls output/result_q*.csv    # result_q1.csv ... result_q12.csv
 ```
 
 ---
@@ -158,10 +159,11 @@ nyc-taxi-dw/
 ├── etl/
 │   ├── download.py         ← fetch raw Parquet files
 │   ├── clean.py            ← cleaning & transformation
-│   └── load.py             ← populate all DB tables
+│   ├── load.py             ← populate all DB tables
+│   └── export_olap_results.py ← export query CSVs
 ├── sql/
 │   ├── ddl.sql             ← CREATE TABLE statements
-│   └── olap_queries.sql    ← pending: 12 OLAP queries
+│   └── olap_queries.sql    ← 12 OLAP queries
 ├── viz/
 │   └── charts.py           ← pending: generate 6 PNG charts
 ├── diagrams/
