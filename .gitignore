@@ -1,0 +1,31 @@
+# Agent instruction files — not for version control
+CLAUDE.md
+CODEX.md
+HANDOFF.md
+
+# Python
+.venv/
+__pycache__/
+*.pyc
+*.pyo
+
+# Data files — too large for git
+data/raw/
+data/clean/
+*.parquet
+
+# Zone lookup is small — optionally commit it
+# !data/raw/zones.csv
+
+# Generated output
+output/
+
+# CSV exports from OLAP queries
+*.csv
+
+# OS / editor noise
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+*.swp
