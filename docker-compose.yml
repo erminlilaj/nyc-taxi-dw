@@ -1,0 +1,25 @@
+services:
+  postgres:
+    image: postgres:16
+    container_name: nyc_taxi_postgres
+    environment:
+      POSTGRES_USER: taxi
+      POSTGRES_PASSWORD: taxi
+      POSTGRES_DB: nyc_taxi_dw
+    ports:
+      - "5433:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    restart: unless-stopped
+
+  adminer:
+    image: adminer:latest
+    container_name: nyc_taxi_adminer
+    ports:
+      - "8080:8080"
+    depends_on:
+      - postgres
+    restart: unless-stopped
+
+volumes:
+  pgdata:

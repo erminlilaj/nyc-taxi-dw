@@ -16,9 +16,9 @@ Status flags: `[ done ]` `[ in progress ]` `[ pending ]` `[ blocked ]`
 | 1.2 | Create `.gitignore` (data, output, venv, agent files) | `[ done ]` |
 | 1.3 | Write `implementation_steps.md` (this file) | `[ done ]` |
 | 1.4 | Create Python virtual environment, install dependencies, generate `requirements.txt` | `[ done ]` |
-| 1.5 | Write `docker-compose.yml` (PostgreSQL 16 + Adminer) | `[ pending ]` |
-| 1.6 | Verify Docker services start and DB is reachable | `[ pending ]` |
-| 1.7 | Write `README.md` with setup instructions | `[ pending ]` |
+| 1.5 | Write `docker-compose.yml` (PostgreSQL 16 + Adminer) | `[ done ]` |
+| 1.6 | Verify Docker services start and DB is reachable | `[ done ]` |
+| 1.7 | Write `README.md` with setup instructions | `[ done ]` |
 
 ---
 
