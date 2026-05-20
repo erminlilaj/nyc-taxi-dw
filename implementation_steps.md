@@ -26,9 +26,9 @@ Status flags: `[ done ]` `[ in progress ]` `[ pending ]` `[ blocked ]`
 
 | # | Step | Status |
 |---|------|--------|
-| 2.1 | Write `etl/download.py` to fetch the 3 Parquet files and `zones.csv` | `[ pending ]` |
-| 2.2 | Run `download.py` and verify all 4 files land in `data/raw/` | `[ pending ]` |
-| 2.3 | Spot-check raw row counts (~9–10 M total across 3 months) | `[ pending ]` |
+| 2.1 | Write `etl/download.py` to fetch the 3 Parquet files and `zones.csv` | `[ done ]` |
+| 2.2 | Run `download.py` and verify all 4 files land in `data/raw/` | `[ done ]` |
+| 2.3 | Spot-check raw row counts (~9–10 M total across 3 months) | `[ done ]` |
 
 ---
 
