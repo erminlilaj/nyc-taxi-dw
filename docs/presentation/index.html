@@ -1,0 +1,672 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>NYC Taxi Data Warehouse | Final Presentation</title>
+  <style>
+    :root {
+      --sapienza: #78101e;
+      --sapienza-dark: #530916;
+      --ink: #172033;
+      --muted: #536273;
+      --line: #d7dfe8;
+      --paper: #ffffff;
+      --soft: #f4f7fa;
+      --teal: #118a82;
+      --blue: #3976c5;
+      --orange: #c97818;
+      --coral: #cb5c51;
+    }
+
+    * { box-sizing: border-box; }
+
+    html, body { height: 100%; }
+
+    body {
+      margin: 0;
+      overflow: hidden;
+      background: var(--ink);
+      color: var(--ink);
+      font-family: Inter, Aptos, "Segoe UI", Arial, sans-serif;
+    }
+
+    button { font: inherit; }
+
+    .deck { height: 100%; }
+
+    .slide {
+      display: none;
+      grid-template-columns: minmax(176px, 20vw) minmax(0, 1fr);
+      min-height: 100%;
+      background: var(--paper);
+    }
+
+    .slide.is-active { display: grid; }
+
+    .rail {
+      position: relative;
+      display: flex;
+      min-height: 100vh;
+      flex-direction: column;
+      justify-content: space-between;
+      overflow: hidden;
+      padding: 3.1vh 2.2vw 3.8vh;
+      background: var(--sapienza);
+      color: white;
+    }
+
+    .rail::after {
+      position: absolute;
+      right: -7rem;
+      bottom: -7rem;
+      width: 17rem;
+      height: 17rem;
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      border-radius: 50%;
+      content: "";
+    }
+
+    .rail-mark {
+      position: relative;
+      z-index: 1;
+      width: min(13vw, 165px);
+      max-width: 100%;
+      filter: brightness(0) invert(1);
+    }
+
+    .rail-section {
+      position: relative;
+      z-index: 1;
+      margin: 0;
+      font-size: clamp(0.64rem, 0.82vw, 0.86rem);
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      line-height: 1.4;
+      text-transform: uppercase;
+    }
+
+    .rail-number {
+      position: relative;
+      z-index: 1;
+      margin: 0;
+      font-family: Georgia, "Times New Roman", serif;
+      font-size: clamp(3rem, 6vw, 6.8rem);
+      line-height: 0.8;
+    }
+
+    .content {
+      position: relative;
+      display: flex;
+      min-width: 0;
+      flex-direction: column;
+      justify-content: center;
+      overflow: hidden;
+      padding: clamp(2.2rem, 5vh, 4.9rem) clamp(2.4rem, 5vw, 6.8rem) clamp(3.8rem, 7vh, 6rem);
+    }
+
+    .content::before {
+      position: absolute;
+      top: 0;
+      right: 0;
+      width: 23vw;
+      height: 1.15rem;
+      background: var(--teal);
+      content: "";
+    }
+
+    .eyebrow {
+      margin: 0 0 0.7rem;
+      color: var(--sapienza);
+      font-size: clamp(0.66rem, 0.85vw, 0.86rem);
+      font-weight: 800;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    h1, h2, h3, p { margin-top: 0; }
+
+    h1, h2 {
+      max-width: 16ch;
+      margin-bottom: 1.1rem;
+      font-family: Georgia, "Times New Roman", serif;
+      font-weight: 400;
+      letter-spacing: 0;
+      line-height: 0.98;
+    }
+
+    h1 { font-size: clamp(3.2rem, 6.3vw, 7.2rem); }
+
+    h2 { font-size: clamp(2.25rem, 4.25vw, 5rem); }
+
+    h3 {
+      margin-bottom: 0.45rem;
+      font-size: clamp(0.9rem, 1.2vw, 1.25rem);
+      line-height: 1.18;
+    }
+
+    .lede {
+      max-width: 51rem;
+      color: var(--muted);
+      font-size: clamp(1rem, 1.42vw, 1.55rem);
+      line-height: 1.45;
+    }
+
+    .cover .content {
+      background: var(--sapienza);
+      color: white;
+    }
+
+    .cover .content::before { background: var(--teal); }
+
+    .cover .rail {
+      background: var(--sapienza-dark);
+    }
+
+    .cover .eyebrow, .cover .lede { color: #ffffff; }
+
+    .cover h1 { max-width: 12ch; margin-bottom: 1.3rem; }
+
+    .cover-logo {
+      width: min(52vw, 660px);
+      max-width: 100%;
+      margin-bottom: clamp(1rem, 3vh, 2.3rem);
+      filter: brightness(0) invert(1);
+    }
+
+    .names {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.45rem 1.25rem;
+      margin: 1.7rem 0 0;
+      font-size: clamp(1rem, 1.25vw, 1.35rem);
+      font-weight: 700;
+    }
+
+    .names span + span::before {
+      margin-right: 1.25rem;
+      color: rgba(255, 255, 255, 0.65);
+      content: "+";
+    }
+
+    .metric-grid, .card-grid, .finding-grid {
+      display: grid;
+      gap: clamp(0.8rem, 1.5vw, 1.6rem);
+      width: 100%;
+    }
+
+    .metric-grid { grid-template-columns: repeat(4, minmax(0, 1fr)); margin-top: 1.2rem; }
+    .card-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); margin-top: 1.2rem; }
+    .finding-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); margin-top: 1rem; }
+
+    .metric {
+      min-width: 0;
+      padding: 1.05rem 0 0;
+      border-top: 4px solid var(--teal);
+    }
+
+    .metric:nth-child(2) { border-color: var(--blue); }
+    .metric:nth-child(3) { border-color: var(--orange); }
+    .metric:nth-child(4) { border-color: var(--coral); }
+
+    .metric strong {
+      display: block;
+      margin-bottom: 0.35rem;
+      font-family: Georgia, "Times New Roman", serif;
+      font-size: clamp(1.6rem, 2.8vw, 3.2rem);
+      font-weight: 400;
+      line-height: 1;
+    }
+
+    .metric span, .card p, .finding p, .small-note {
+      color: var(--muted);
+      font-size: clamp(0.82rem, 1.05vw, 1.1rem);
+      line-height: 1.35;
+    }
+
+    .card, .finding {
+      min-width: 0;
+      border-top: 2px solid var(--line);
+      padding: 1rem 0.1rem 0;
+    }
+
+    .card p, .finding p { margin-bottom: 0; }
+
+    .diagram {
+      display: block;
+      width: 100%;
+      max-height: min(55vh, 510px);
+      margin-top: 0.45rem;
+      object-fit: contain;
+      object-position: left center;
+    }
+
+    .architecture {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      align-items: stretch;
+      gap: 0;
+      width: 100%;
+      margin-top: 1.3rem;
+    }
+
+    .architecture-step {
+      position: relative;
+      min-height: 12rem;
+      padding: 1.25rem 1.1rem 1.1rem;
+      border-top: 4px solid var(--sapienza);
+      background: var(--soft);
+    }
+
+    .architecture-step:nth-child(2) { border-color: var(--teal); }
+    .architecture-step:nth-child(3) { border-color: var(--blue); }
+    .architecture-step:nth-child(4) { border-color: var(--orange); }
+
+    .architecture-step::after {
+      position: absolute;
+      top: 50%;
+      right: -0.75rem;
+      z-index: 2;
+      width: 1.5rem;
+      color: var(--sapienza);
+      font-size: 1.6rem;
+      text-align: center;
+      content: ">";
+      transform: translateY(-50%);
+    }
+
+    .architecture-step:last-child::after { content: ""; }
+
+    .architecture-step .index {
+      display: block;
+      margin-bottom: 1.65rem;
+      color: var(--sapienza);
+      font-family: Georgia, "Times New Roman", serif;
+      font-size: 1.55rem;
+    }
+
+    .architecture-step p { margin-bottom: 0; color: var(--muted); line-height: 1.35; }
+
+    .process {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) minmax(0, 1.5fr);
+      gap: clamp(1.5rem, 4vw, 4rem);
+      align-items: center;
+      width: 100%;
+    }
+
+    .process-list { margin: 0; padding: 0; list-style: none; }
+
+    .process-list li {
+      display: grid;
+      grid-template-columns: 2.2rem 1fr;
+      gap: 0.8rem;
+      align-items: start;
+      padding: 0.7rem 0;
+      border-bottom: 1px solid var(--line);
+      font-size: clamp(0.95rem, 1.15vw, 1.25rem);
+      line-height: 1.3;
+    }
+
+    .process-list b { color: var(--sapienza); font-family: Georgia, "Times New Roman", serif; }
+
+    .data-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 0.65rem;
+      font-size: clamp(0.82rem, 1.08vw, 1.08rem);
+    }
+
+    .data-table th, .data-table td { padding: 0.78rem 0.8rem; border-bottom: 1px solid var(--line); text-align: left; }
+    .data-table th { color: var(--sapienza); font-size: 0.82em; letter-spacing: 0.06em; text-transform: uppercase; }
+    .data-table td:last-child, .data-table th:last-child { text-align: right; }
+
+    .chart-wrap { width: 100%; margin-top: 0.15rem; }
+
+    .chart {
+      display: block;
+      width: 100%;
+      max-height: min(55vh, 500px);
+      object-fit: contain;
+      object-position: left center;
+    }
+
+    .chart-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: clamp(1rem, 2vw, 2.4rem);
+      width: 100%;
+    }
+
+    .chart-grid figure { min-width: 0; margin: 0; }
+    .chart-grid .chart { max-height: min(41vh, 360px); }
+    figcaption { margin-top: 0.45rem; color: var(--muted); font-size: clamp(0.75rem, 0.9vw, 0.9rem); line-height: 1.35; }
+
+    .quote {
+      max-width: 52rem;
+      margin: 0.75rem 0 1.5rem;
+      padding-left: 1.3rem;
+      border-left: 5px solid var(--teal);
+      color: var(--ink);
+      font-family: Georgia, "Times New Roman", serif;
+      font-size: clamp(1.35rem, 2.25vw, 2.45rem);
+      line-height: 1.2;
+    }
+
+    .bullet-list { max-width: 65rem; margin: 0.4rem 0 0; padding: 0; list-style: none; }
+    .bullet-list li { position: relative; padding: 0.5rem 0 0.5rem 1.35rem; color: var(--muted); font-size: clamp(0.95rem, 1.23vw, 1.25rem); line-height: 1.38; }
+    .bullet-list li::before { position: absolute; left: 0; color: var(--teal); content: "●"; }
+
+    .footer {
+      position: fixed;
+      right: 1.15rem;
+      bottom: 1.05rem;
+      z-index: 10;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      color: var(--muted);
+    }
+
+    .footer button {
+      width: 2.3rem;
+      height: 2.3rem;
+      border: 1px solid var(--line);
+      border-radius: 50%;
+      background: var(--paper);
+      color: var(--ink);
+      cursor: pointer;
+      font-size: 1.25rem;
+      line-height: 1;
+    }
+
+    .footer button:hover, .footer button:focus-visible { border-color: var(--sapienza); color: var(--sapienza); outline: none; }
+    .footer button:disabled { opacity: 0.35; cursor: default; }
+    .slide-count { min-width: 3.4rem; color: var(--ink); font-size: 0.88rem; text-align: center; }
+
+    @media (max-width: 760px), (max-height: 570px) {
+      .slide { grid-template-columns: 1fr; grid-template-rows: 5.6rem 1fr; }
+      .rail { min-height: 0; flex-direction: row; align-items: center; padding: 0.85rem 1.2rem; }
+      .rail-mark { width: 8rem; }
+      .rail-section { display: none; }
+      .rail-number { font-size: 2rem; }
+      .content { padding: 1.5rem 1.45rem 3.5rem; }
+      .metric-grid, .card-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      .architecture { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 0.65rem; }
+      .architecture-step { min-height: 8.5rem; }
+      .architecture-step::after { display: none; }
+      .process, .chart-grid { grid-template-columns: 1fr; }
+      .diagram, .chart { max-height: 42vh; }
+      .cover-logo { width: min(82vw, 520px); }
+    }
+  </style>
+</head>
+<body>
+  <main class="deck" aria-label="NYC Taxi Data Warehouse final presentation">
+    <section class="slide cover is-active" data-section="Final presentation">
+      <aside class="rail">
+        <img class="rail-mark" src="assets/sapienza-logo.png" alt="Sapienza Universita di Roma">
+        <p class="rail-section">Data Management<br>2025 / 2026</p>
+        <p class="rail-number">01</p>
+      </aside>
+      <div class="content">
+        <img class="cover-logo" src="assets/sapienza-logo.png" alt="Sapienza Universita di Roma">
+        <p class="eyebrow">Final project presentation</p>
+        <h1>NYC Taxi Data Warehouse</h1>
+        <p class="lede">A PostgreSQL dimensional warehouse with reproducible OLAP analysis and a Neo4j relationship-exploration layer.</p>
+        <p class="names"><span>Ermin Lilaj</span><span>Borian Llukacaj</span></p>
+      </div>
+    </section>
+
+    <section class="slide" data-section="Objective">
+      <aside class="rail"><img class="rail-mark" src="assets/sapienza-logo.png" alt="Sapienza Universita di Roma"><p class="rail-section">01 / Objective</p><p class="rail-number">02</p></aside>
+      <div class="content">
+        <p class="eyebrow">The question</p>
+        <h2>How can NYC taxi trips become reliable analytical evidence?</h2>
+        <p class="lede">We transformed raw operational trip records into a warehouse that supports repeatable questions about demand, revenue, payments, vendors, and movement between city zones.</p>
+        <div class="card-grid">
+          <article class="card"><h3>Build</h3><p>A validated PostgreSQL star schema at one-trip grain.</p></article>
+          <article class="card"><h3>Analyze</h3><p>Twelve OLAP queries covering roll-up, drill-down, slice, dice, ranking, and windows.</p></article>
+          <article class="card"><h3>Explore</h3><p>A compact Neo4j graph derived from warehouse aggregates, never raw trip nodes.</p></article>
+        </div>
+      </div>
+    </section>
+
+    <section class="slide" data-section="Architecture">
+      <aside class="rail"><img class="rail-mark" src="assets/sapienza-logo.png" alt="Sapienza Universita di Roma"><p class="rail-section">02 / Architecture</p><p class="rail-number">03</p></aside>
+      <div class="content">
+        <p class="eyebrow">Two complementary layers</p>
+        <h2>One source of truth, two ways to analyze it.</h2>
+        <div class="architecture">
+          <article class="architecture-step"><span class="index">01</span><h3>NYC TLC files</h3><p>January–March 2024 Yellow Taxi Parquet records and the official zone lookup.</p></article>
+          <article class="architecture-step"><span class="index">02</span><h3>Python ETL</h3><p>Cleaning, conformance, dimensional preparation, and bulk fact loading.</p></article>
+          <article class="architecture-step"><span class="index">03</span><h3>PostgreSQL</h3><p>The authoritative dimensional warehouse and OLAP query engine.</p></article>
+          <article class="architecture-step"><span class="index">04</span><h3>Neo4j</h3><p>A derived aggregate graph for route and relationship exploration.</p></article>
+        </div>
+        <p class="quote">PostgreSQL answers dimensional questions. Neo4j makes the connections visible.</p>
+      </div>
+    </section>
+
+    <section class="slide" data-section="Dataset">
+      <aside class="rail"><img class="rail-mark" src="assets/sapienza-logo.png" alt="Sapienza Universita di Roma"><p class="rail-section">03 / Dataset</p><p class="rail-number">04</p></aside>
+      <div class="content">
+        <p class="eyebrow">Source and scope</p>
+        <h2>NYC TLC Yellow Taxi trips, focused on Q1 2024.</h2>
+        <div class="process">
+          <div>
+            <p class="lede">The source combines trip-level operational data with a Taxi Zone Lookup table. The warehouse preserves the information needed for time, geography, payment, service, and revenue analysis.</p>
+            <p class="small-note">Study period: January, February, and March 2024.</p>
+          </div>
+          <table class="data-table" aria-label="Dataset preparation counts">
+            <thead><tr><th>Stage</th><th>Trips</th></tr></thead>
+            <tbody>
+              <tr><td>Raw TLC records</td><td>9,554,778</td></tr>
+              <tr><td>Cleaned and loaded</td><td>8,448,046</td></tr>
+              <tr><td>Excluded during quality checks</td><td>1,106,732</td></tr>
+              <tr><td>Retention rate</td><td>88.4%</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <section class="slide" data-section="Data quality">
+      <aside class="rail"><img class="rail-mark" src="assets/sapienza-logo.png" alt="Sapienza Universita di Roma"><p class="rail-section">03 / Dataset</p><p class="rail-number">05</p></aside>
+      <div class="content">
+        <p class="eyebrow">Data quality controls</p>
+        <h2>Cleaning rules turn operational records into trustworthy measures.</h2>
+        <div class="process">
+          <ol class="process-list">
+            <li><b>01</b><span>Keep pickups in the defined January–March 2024 window.</span></li>
+            <li><b>02</b><span>Reject missing timestamps or missing pickup/drop-off locations.</span></li>
+            <li><b>03</b><span>Remove non-positive or implausible fares and distances.</span></li>
+            <li><b>04</b><span>Validate passenger counts and trip durations from 1 to 300 minutes.</span></li>
+            <li><b>05</b><span>Normalize missing tip values to zero before aggregation.</span></li>
+          </ol>
+          <div>
+            <p class="quote">8.45 million cleaned trips form the auditable analytical base.</p>
+            <p class="lede">Dimensions load before facts; constraints and row-count checks verify the star-schema contract after loading.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="slide" data-section="DFM">
+      <aside class="rail"><img class="rail-mark" src="assets/sapienza-logo.png" alt="Sapienza Universita di Roma"><p class="rail-section">04 / Warehouse design</p><p class="rail-number">06</p></aside>
+      <div class="content">
+        <p class="eyebrow">Dimensional Fact Model</p>
+        <h2>One fact row represents one cleaned taxi trip.</h2>
+        <p class="lede">Trip measures include fare, tip, total amount, distance, passenger count, and duration. Five dimensions enable analysis by time, pickup, drop-off, payment, and service.</p>
+        <img class="diagram" src="../../diagrams/dfm.png" alt="Dimensional fact model for the taxi trip warehouse">
+      </div>
+    </section>
+
+    <section class="slide" data-section="Star schema">
+      <aside class="rail"><img class="rail-mark" src="assets/sapienza-logo.png" alt="Sapienza Universita di Roma"><p class="rail-section">04 / Warehouse design</p><p class="rail-number">07</p></aside>
+      <div class="content">
+        <p class="eyebrow">Physical PostgreSQL model</p>
+        <h2>A compact star schema keeps OLAP questions legible.</h2>
+        <div class="metric-grid">
+          <article class="metric"><strong>5</strong><span>conformed dimensions</span></article>
+          <article class="metric"><strong>2,183</strong><span>time dimension rows</span></article>
+          <article class="metric"><strong>265 + 265</strong><span>pickup and drop-off zones</span></article>
+          <article class="metric"><strong>8.45M</strong><span>fact rows</span></article>
+        </div>
+        <img class="diagram" src="../../diagrams/er.png" alt="Physical PostgreSQL star schema">
+      </div>
+    </section>
+
+    <section class="slide" data-section="OLAP">
+      <aside class="rail"><img class="rail-mark" src="assets/sapienza-logo.png" alt="Sapienza Universita di Roma"><p class="rail-section">05 / OLAP analysis</p><p class="rail-number">08</p></aside>
+      <div class="content">
+        <p class="eyebrow">Analytical query suite</p>
+        <h2>Twelve SQL queries answer complementary business questions.</h2>
+        <div class="card-grid">
+          <article class="card"><h3>Roll-up & drill-down</h3><p>Demand and revenue across hour, day, month, borough, and zone levels.</p></article>
+          <article class="card"><h3>Slice & dice</h3><p>Focused views across payments, trip length, duration, geography, and vendor.</p></article>
+          <article class="card"><h3>Ranking & windows</h3><p>Top locations, peak periods, and comparative vendor trends.</p></article>
+        </div>
+        <p class="quote">Each result is SQL-first, exportable, and reproducible from the warehouse.</p>
+      </div>
+    </section>
+
+    <section class="slide" data-section="Validation">
+      <aside class="rail"><img class="rail-mark" src="assets/sapienza-logo.png" alt="Sapienza Universita di Roma"><p class="rail-section">05 / OLAP analysis</p><p class="rail-number">09</p></aside>
+      <div class="content">
+        <p class="eyebrow">Reproducibility and validation</p>
+        <h2>The analysis can be rebuilt, checked, and explained.</h2>
+        <div class="finding-grid">
+          <article class="finding"><h3>Traceable pipeline</h3><p>Download, clean, dimensional load, OLAP export, graph aggregation, and graph loading are all executable project steps.</p></article>
+          <article class="finding"><h3>Warehouse checks</h3><p>Fact and dimension row counts, keys, and constraints verify that loading completed correctly.</p></article>
+          <article class="finding"><h3>Version-controlled figures</h3><p>Charts are created by Python queries against PostgreSQL rather than manually edited screenshots.</p></article>
+          <article class="finding"><h3>Derived graph only</h3><p>Neo4j aggregates are regenerated from PostgreSQL, preserving an audit path to the source of truth.</p></article>
+        </div>
+        <p class="quote">Reproducibility is part of the deliverable, not an afterthought.</p>
+      </div>
+    </section>
+
+    <section class="slide" data-section="Insight 1">
+      <aside class="rail"><img class="rail-mark" src="assets/sapienza-logo.png" alt="Sapienza Universita di Roma"><p class="rail-section">06 / Findings</p><p class="rail-number">10</p></aside>
+      <div class="content">
+        <p class="eyebrow">OLAP finding / Geography</p>
+        <h2>Taxi demand concentrates in Manhattan, with JFK as the key exception.</h2>
+        <figure class="chart-wrap"><img class="chart" src="../figures/pickup_hubs.png" alt="Bar chart of the top ten pickup hubs by trip volume"><figcaption>Midtown Center leads overall, while JFK Airport is the largest non-Manhattan pickup source.</figcaption></figure>
+      </div>
+    </section>
+
+    <section class="slide" data-section="Insight 2">
+      <aside class="rail"><img class="rail-mark" src="assets/sapienza-logo.png" alt="Sapienza Universita di Roma"><p class="rail-section">06 / Findings</p><p class="rail-number">11</p></aside>
+      <div class="content">
+        <p class="eyebrow">OLAP finding / Payments</p>
+        <h2>Credit card payments dominate at the busiest pickup hubs.</h2>
+        <figure class="chart-wrap"><img class="chart" src="../figures/payment_mix_top_zones.png" alt="Stacked bar chart of payment mix at the five busiest pickup hubs"><figcaption>The pattern is consistent across the highest-volume pickup zones, supporting payment-based slicing in the warehouse.</figcaption></figure>
+      </div>
+    </section>
+
+    <section class="slide" data-section="Insight 3">
+      <aside class="rail"><img class="rail-mark" src="assets/sapienza-logo.png" alt="Sapienza Universita di Roma"><p class="rail-section">06 / Findings</p><p class="rail-number">12</p></aside>
+      <div class="content">
+        <p class="eyebrow">OLAP finding / Time and revenue</p>
+        <h2>Revenue and demand reveal distinct time patterns.</h2>
+        <div class="chart-grid">
+          <figure><img class="chart" src="../figures/vendor_revenue_by_month.png" alt="Line chart of monthly revenue by vendor"><figcaption>Both vendors reach their highest revenue in March.</figcaption></figure>
+          <figure><img class="chart" src="../figures/hourly_demand_by_day_type.png" alt="Line chart of hourly weekday and weekend demand"><figcaption>Weekday demand has the stronger evening peak, especially around 18:00.</figcaption></figure>
+        </div>
+      </div>
+    </section>
+
+    <section class="slide" data-section="Neo4j">
+      <aside class="rail"><img class="rail-mark" src="assets/sapienza-logo.png" alt="Sapienza Universita di Roma"><p class="rail-section">07 / Graph analysis</p><p class="rail-number">13</p></aside>
+      <div class="content">
+        <p class="eyebrow">Neo4j as a derived layer</p>
+        <h2>The graph models meaningful relationships, not 8 million trip nodes.</h2>
+        <div class="metric-grid">
+          <article class="metric"><strong>565</strong><span>graph nodes</span></article>
+          <article class="metric"><strong>39,590</strong><span>aggregate relationships</span></article>
+          <article class="metric"><strong>TRIPS_TO</strong><span>directional taxi corridors</span></article>
+          <article class="metric"><strong>G1</strong><span>JFK-to-Manhattan graph view</span></article>
+        </div>
+        <img class="diagram" src="../figures/neo4j_jfk_manhattan.png" alt="Neo4j graph view of JFK Airport to Manhattan corridors">
+      </div>
+    </section>
+
+    <section class="slide" data-section="Project design">
+      <aside class="rail"><img class="rail-mark" src="assets/sapienza-logo.png" alt="Sapienza Universita di Roma"><p class="rail-section">08 / Project design</p><p class="rail-number">14</p></aside>
+      <div class="content">
+        <p class="eyebrow">Design rationale</p>
+        <h2>Architecture decisions and project scope.</h2>
+        <div class="finding-grid">
+          <article class="finding"><h3>Warehouse first</h3><p>PostgreSQL retains trip-level facts, conformed dimensions, constraints, and all OLAP responsibility.</p></article>
+          <article class="finding"><h3>Neo4j has a focused role</h3><p>The graph receives only aggregates, making route direction and connected-location patterns easy to inspect.</p></article>
+          <article class="finding"><h3>Evidence is reproducible</h3><p>ETL, SQL, graph export/load, figures, diagrams, and report generation are all in the repository.</p></article>
+          <article class="finding"><h3>Known limitations are explicit</h3><p>The study covers one taxi service and three months; it is not presented as a citywide causal model.</p></article>
+        </div>
+        <p class="quote">PostgreSQL is the source of truth and OLAP engine; Neo4j is the relationship-focused analytical extension.</p>
+      </div>
+    </section>
+
+    <section class="slide cover" data-section="Conclusion">
+      <aside class="rail"><img class="rail-mark" src="assets/sapienza-logo.png" alt="Sapienza Universita di Roma"><p class="rail-section">Final project</p><p class="rail-number">15</p></aside>
+      <div class="content">
+        <p class="eyebrow">Conclusion</p>
+        <h1>From raw trips to trustworthy analysis.</h1>
+        <p class="lede">A complete, validated warehouse; reproducible OLAP findings; and a graph layer that complements rather than replaces dimensional analysis.</p>
+        <div class="metric-grid">
+          <article class="metric"><strong>8.45M</strong><span>cleaned taxi trips</span></article>
+          <article class="metric"><strong>12</strong><span>OLAP queries</span></article>
+          <article class="metric"><strong>4</strong><span>reproducible figures</span></article>
+          <article class="metric"><strong>1</strong><span>auditable architecture</span></article>
+        </div>
+        <p class="names"><span>Ermin Lilaj</span><span>Borian Llukacaj</span></p>
+      </div>
+    </section>
+  </main>
+
+  <nav class="footer" aria-label="Presentation controls">
+    <button id="previous" type="button" title="Previous slide" aria-label="Previous slide">&lt;</button>
+    <span class="slide-count" id="slide-count" aria-live="polite">01 / 15</span>
+    <button id="next" type="button" title="Next slide" aria-label="Next slide">&gt;</button>
+    <button id="fullscreen" type="button" title="Toggle fullscreen" aria-label="Toggle fullscreen">[]</button>
+  </nav>
+
+  <script>
+    const slides = Array.from(document.querySelectorAll('.slide'));
+    const previous = document.querySelector('#previous');
+    const next = document.querySelector('#next');
+    const fullscreen = document.querySelector('#fullscreen');
+    const count = document.querySelector('#slide-count');
+    let active = 0;
+
+    function render(index) {
+      active = Math.max(0, Math.min(index, slides.length - 1));
+      slides.forEach((slide, slideIndex) => slide.classList.toggle('is-active', slideIndex === active));
+      previous.disabled = active === 0;
+      next.disabled = active === slides.length - 1;
+      count.textContent = `${String(active + 1).padStart(2, '0')} / ${String(slides.length).padStart(2, '0')}`;
+      history.replaceState(null, '', `#slide-${active + 1}`);
+    }
+
+    function readHash() {
+      const match = window.location.hash.match(/^#slide-(\d+)$/);
+      return match ? Number(match[1]) - 1 : 0;
+    }
+
+    previous.addEventListener('click', () => render(active - 1));
+    next.addEventListener('click', () => render(active + 1));
+    fullscreen.addEventListener('click', async () => {
+      if (document.fullscreenElement) await document.exitFullscreen();
+      else await document.documentElement.requestFullscreen();
+    });
+
+    document.addEventListener('keydown', (event) => {
+      if (['ArrowRight', 'PageDown', ' '].includes(event.key)) { event.preventDefault(); render(active + 1); }
+      if (['ArrowLeft', 'PageUp'].includes(event.key)) { event.preventDefault(); render(active - 1); }
+      if (event.key === 'Home') { event.preventDefault(); render(0); }
+      if (event.key === 'End') { event.preventDefault(); render(slides.length - 1); }
+    });
+
+    window.addEventListener('hashchange', () => render(readHash()));
+    render(readHash());
+  </script>
+</body>
+</html>

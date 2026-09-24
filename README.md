@@ -142,6 +142,16 @@ and as editable source in [`docs/report.md`](docs/report.md). Supporting
 documentation covers the data model, diagram sources, validation, graph model,
 and analysis findings.
 
+The final 15-slide HTML presentation is available at
+[`docs/presentation/index.html`](docs/presentation/index.html). Open it directly
+in a browser, or serve the repository root with a static HTTP server:
+
+```bash
+python3 -m http.server 8000
+```
+
+Then open [http://localhost:8000/docs/presentation/](http://localhost:8000/docs/presentation/).
+
 Regenerate the analytical figures and PDF after changing report content with:
 
 ```bash
