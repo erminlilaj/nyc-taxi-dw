@@ -29,3 +29,15 @@ you change it.
    report and demo.
 
 The CSV files are generated artifacts and are intentionally not versioned.
+
+## Load or refresh the graph
+
+```bash
+.venv/bin/python etl/export_neo4j_graph.py
+docker exec -i nyc_taxi_neo4j cypher-shell -u neo4j -p taxigraph2024 \
+  -d neo4j < neo4j/load_graph.cypher
+```
+
+The loader clears and recreates the derived graph but does not touch PostgreSQL.
+Use the scripts in `neo4j/exploration_queries.cypher` from Browser or
+`cypher-shell` to explore the loaded graph.
