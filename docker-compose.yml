@@ -32,7 +32,7 @@ services:
       - "7687:7687"
     volumes:
       - neo4jdata:/data
-      - ./neo4j/import:/var/lib/neo4j/import
+      - ./neo4j/import:/import:ro
     restart: unless-stopped
 
 volumes:

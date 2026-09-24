@@ -36,6 +36,6 @@ Run the export from the repository root after PostgreSQL has been loaded:
 .venv/bin/python etl/export_neo4j_graph.py
 ```
 
-The generated files are written to `neo4j/import/`, which Docker mounts at
-Neo4j's `file:///` import directory. Re-running the command replaces all graph
-export files with fresh aggregates from PostgreSQL.
+The generated files are written to `neo4j/import/`, which Docker mounts
+read-only as Neo4j's `file:///` import directory. Re-running the command
+replaces all graph-export files with fresh aggregates from PostgreSQL.
