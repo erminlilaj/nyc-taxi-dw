@@ -1,0 +1,2 @@
+# Generated Neo4j import CSV files are written here by
+# etl/export_neo4j_graph.py and intentionally ignored by Git.

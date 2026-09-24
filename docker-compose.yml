@@ -21,5 +21,20 @@ services:
       - postgres
     restart: unless-stopped
 
+  neo4j:
+    image: neo4j:5.26-community
+    container_name: nyc_taxi_neo4j
+    environment:
+      NEO4J_AUTH: neo4j/taxigraph2024
+      NEO4J_dbms_security_allow__csv__import__from__file__urls: "true"
+    ports:
+      - "7474:7474"
+      - "7687:7687"
+    volumes:
+      - neo4jdata:/data
+      - ./neo4j/import:/var/lib/neo4j/import
+    restart: unless-stopped
+
 volumes:
   pgdata:
+  neo4jdata:
