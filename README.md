@@ -136,9 +136,17 @@ The logical DFM and physical star-schema diagrams are ready for the submission:
 - [`diagrams/dfm.png`](diagrams/dfm.png)
 - [`diagrams/er.png`](diagrams/er.png)
 
-The completed report is [`docs/report.md`](docs/report.md). Supporting
+The completed report is available as
+[`output/pdf/nyc_taxi_dw_final_report.pdf`](output/pdf/nyc_taxi_dw_final_report.pdf)
+and as editable source in [`docs/report.md`](docs/report.md). Supporting
 documentation covers the data model, diagram sources, validation, graph model,
 and analysis findings.
+
+Regenerate the PDF after changing report content with:
+
+```bash
+.venv/bin/python docs/generate_report_pdf.py
+```
 
 ## Demo flow
 
@@ -187,7 +195,9 @@ nyc-taxi-dw/
 |  `- validation.md
 |- data/raw/                  ignored raw data
 |- data/clean/                ignored cleaned data
-`- output/                    ignored OLAP CSV exports
+`- output/
+   |- pdf/                    final report PDF
+   `- result_q*.csv           ignored reproducible OLAP exports
 ```
 
 ## Stop services

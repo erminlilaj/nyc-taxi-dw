@@ -22,6 +22,8 @@ output/
 !output/
 !output/charts/
 !output/charts/.gitkeep
+!output/pdf/
+!output/pdf/nyc_taxi_dw_final_report.pdf
 
 # CSV exports from OLAP queries
 *.csv
