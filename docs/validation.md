@@ -58,5 +58,27 @@ Cleaned pickup timestamps were verified to fall inside January-March 2024.
 docker compose ps
 docker exec -it nyc_taxi_postgres psql -U taxi -d nyc_taxi_dw -c "\dt"
 docker exec -it nyc_taxi_postgres psql -U taxi -d nyc_taxi_dw -c "SELECT COUNT(*) FROM fact_trip;"
-python etl/export_olap_results.py
+.venv/bin/python etl/export_olap_results.py
 ```
+
+## Neo4j Graph Counts
+
+The graph is recreated from PostgreSQL aggregates, not loaded from an
+independent raw-data source. The last validated graph contained:
+
+| Item | Count |
+|---|---:|
+| Total nodes | 565 |
+| Total relationships | 39,590 |
+| Route (`TRIPS_TO`) relationships | 33,304 |
+| Pickup-hour relationships | 5,369 |
+| Pickup-payment relationships | 911 |
+| Vendor-month relationships | 6 |
+
+```bash
+.venv/bin/python etl/export_neo4j_graph.py
+docker exec -i nyc_taxi_neo4j cypher-shell -u neo4j -p taxigraph2024 \
+  -d neo4j < neo4j/load_graph.cypher
+```
+
+See `docs/graph_analysis.md` for the corresponding analysis results.

@@ -1,212 +1,201 @@
 # NYC Taxi Data Warehouse
 
-**Course:** DM2526 — Data Management 2025/2026
-**Dataset:** NYC TLC Yellow Taxi Trip Records — January, February, March 2024
-**Stack:** PostgreSQL 16 · Python 3.10+ · pandas · SQLAlchemy · matplotlib/seaborn
+**Course:** DM2526 - Data Management 2025/2026
+**Dataset:** NYC TLC Yellow Taxi Trip Records, January-March 2024
+**Stack:** PostgreSQL 16, Python 3.10+, pandas, SQLAlchemy, Neo4j 5
 
-A data warehouse project in progress. Setup, data acquisition, cleaning, PostgreSQL schema creation, warehouse loading, and OLAP query exports are complete; visualizations, diagrams, and the report are the next phases.
+This project implements a PostgreSQL star-schema data warehouse for NYC Yellow
+Taxi trips and a Neo4j graph layer for visual relationship exploration.
+PostgreSQL is the source of truth; Neo4j is rebuilt from PostgreSQL aggregates.
 
----
+## Results at a glance
 
-## Dataset Statistics
+| Stage | Result |
+|---|---:|
+| Raw TLC trips | 9,554,778 |
+| Cleaned trips loaded in `fact_trip` | 8,448,046 |
+| PostgreSQL dimensions | 5 |
+| OLAP SQL queries | 12 |
+| Neo4j nodes | 565 |
+| Neo4j aggregate relationships | 39,590 |
 
-### Raw data (downloaded)
+The data-quality rules retain 88.4% of raw trips. See
+[`docs/validation.md`](docs/validation.md) for counts and checks.
 
-| File | Rows | Size |
-|------|------|------|
-| `yellow_tripdata_2024-01.parquet` | 2,964,624 | 47.6 MB |
-| `yellow_tripdata_2024-02.parquet` | 3,007,526 | 48.0 MB |
-| `yellow_tripdata_2024-03.parquet` | 3,582,628 | 57.3 MB |
-| **Total raw** | **9,554,778** | **152.9 MB** |
+## Architecture
 
-### After cleaning
+```text
+NYC TLC Parquet files
+        |
+        v
+Python ETL and cleaning
+        |
+        v
+PostgreSQL star-schema warehouse
+        |                       |
+        v                       v
+12 OLAP SQL queries     Neo4j aggregate CSV export
+                                |
+                                v
+                    Neo4j Browser graph exploration
+```
 
-| File | Rows kept | Dropped | Drop rate |
-|------|-----------|---------|-----------|
-| January 2024  | 2,713,591 | 251,033 | 8.5% |
-| February 2024 | 2,709,891 | 297,635 | 9.9% |
-| March 2024    | 3,024,564 | 558,064 | 15.6% |
-| **Total clean** | **8,448,046** | **1,106,732** | **11.6%** |
-
-Rows are dropped for: null timestamps or location IDs, pickup timestamps outside January-March 2024, zero/negative fares, implausible trip distances (>200 mi), trip durations outside 1–300 minutes, or passenger counts outside 1–6.
-
----
+The graph stores aggregate taxi corridors and patterns, never one node per
+trip. This keeps graph analysis responsive and traceable to the warehouse. See
+[`docs/architecture.md`](docs/architecture.md) and
+[`neo4j/graph_model.md`](neo4j/graph_model.md) for details.
 
 ## Prerequisites
 
-- [Docker](https://docs.docker.com/get-docker/) and Docker Compose
-- Python 3.10+
-
----
+- Docker and Docker Compose
+- Python 3.10 or later
 
 ## Setup
 
-### 1. Start the database
+Start PostgreSQL, Adminer, and Neo4j:
 
 ```bash
 docker compose up -d
-docker compose ps        # both services should show "Up"
+docker compose ps
 ```
 
-| Service    | URL                  | Credentials                                   |
-|------------|----------------------|-----------------------------------------------|
-| PostgreSQL | `localhost:5433`     | user: `taxi` · password: `taxi` · db: `nyc_taxi_dw` |
-| Adminer    | `http://localhost:8080` | System: PostgreSQL · Server: `postgres`    |
+| Service | Address | Credentials |
+|---|---|---|
+| PostgreSQL | `localhost:5433` | `taxi` / `taxi`, database `nyc_taxi_dw` |
+| Adminer | [http://localhost:8080](http://localhost:8080) | PostgreSQL server `postgres` |
+| Neo4j Browser | [http://localhost:7474](http://localhost:7474) | `neo4j` / `taxigraph2024` |
+| Neo4j Bolt | `bolt://localhost:7687` | `neo4j` / `taxigraph2024` |
 
-### 2. Create a Python virtual environment
+Create and activate the Python environment:
 
 ```bash
 python -m venv .venv
-source .venv/bin/activate        # Linux/macOS
-# .venv\Scripts\activate         # Windows
-
+source .venv/bin/activate
 pip install -r requirements.txt
 ```
 
----
+## Build the warehouse
 
-## Running the ETL Pipeline
-
-Run these steps in order. Steps 1-4 are implemented.
+Run these steps in order when starting from raw data:
 
 ```bash
-# 1. Download raw Parquet files (~500 MB)
-python etl/download.py
-
-# 2. Clean and transform the data (~2–5 min)
-python etl/clean.py
-
-# 3. Apply the database schema
+.venv/bin/python etl/download.py
+.venv/bin/python etl/clean.py
 docker exec -i nyc_taxi_postgres psql -U taxi -d nyc_taxi_dw < sql/ddl.sql
-
-# 4. Load all tables (~15–40 min for 8M+ rows)
-python etl/load.py
+.venv/bin/python etl/load.py
 ```
 
-### Verify the load
+Verify the expected fact-table count:
 
 ```bash
-docker exec -it nyc_taxi_postgres psql -U taxi -d nyc_taxi_dw -c "SELECT COUNT(*) FROM fact_trip;"
-# Expected: 8,448,046
+docker exec -it nyc_taxi_postgres psql -U taxi -d nyc_taxi_dw \
+  -c "SELECT COUNT(*) FROM fact_trip;"
 ```
 
----
+Expected output: `8,448,046` rows.
 
-## OLAP Queries
+## Run OLAP analysis
 
-The 12 OLAP queries live in `sql/olap_queries.sql`, covering rollup, drill-down, slice, dice, ranking, and window operations.
-
-Run them interactively:
+The 12 SQL queries cover roll-up, drill-down, slice, dice, ranking, and window
+operations.
 
 ```bash
 docker exec -i nyc_taxi_postgres psql -U taxi -d nyc_taxi_dw < sql/olap_queries.sql
+.venv/bin/python etl/export_olap_results.py
 ```
 
-Export all query results to CSV for charts:
+The generated `output/result_q1.csv` through `output/result_q12.csv` files are
+ignored by Git because they can be reproduced from the warehouse.
+
+## Run the Neo4j graph layer
+
+Export graph aggregates, then load the graph:
 
 ```bash
-python etl/export_olap_results.py
-ls output/result_q*.csv    # result_q1.csv ... result_q12.csv
+.venv/bin/python etl/export_neo4j_graph.py
+docker exec -i nyc_taxi_neo4j cypher-shell -u neo4j -p taxigraph2024 \
+  -d neo4j < neo4j/load_graph.cypher
 ```
 
----
-
-## Visualizations
-
-Use **Power BI** for the final visualizations. Recommended input: import the exported OLAP CSV files from `output/` instead of importing the full `fact_trip` table. The CSVs are smaller, already aggregated, and directly match the required charts.
+Open Neo4j Browser and run `neo4j/exploration_queries.cypher`. The queries
+answer corridor, hub, payment-pattern, vendor, and hourly-demand questions. G1
+is a presentation-friendly JFK Airport to Manhattan graph visualization.
 
 ```bash
-python etl/export_olap_results.py
-ls output/result_q*.csv
+docker exec -i nyc_taxi_neo4j cypher-shell -u neo4j -p taxigraph2024 \
+  -d neo4j < neo4j/exploration_queries.cypher
 ```
 
-| Power BI visual | Source CSV | Suggested chart |
-|-----------------|------------|-----------------|
-| Revenue by month | `output/result_q2.csv` | Column/bar chart |
-| Weekday vs weekend demand by hour | `output/result_q7.csv` | Line chart |
-| Top 10 pickup zones | `output/result_q9.csv` | Horizontal bar chart |
-| Tip percentage by payment type | `output/result_q10.csv` | Bar or pie chart |
-| Trip duration by borough | `output/result_q4.csv` | Bar chart |
-| Hour by day-of-week demand | `output/result_q7.csv` | Matrix heatmap |
+Read [`docs/neo4j_notes.md`](docs/neo4j_notes.md) for the workflow and
+[`docs/graph_analysis.md`](docs/graph_analysis.md) for validated results.
 
-Optional: connect Power BI directly to PostgreSQL at `localhost:5433`, database `nyc_taxi_dw`, user/password `taxi`/`taxi`. Use this only if you need interactive exploration beyond the exported OLAP results.
+## Diagrams and report
 
----
+The logical DFM and physical star-schema diagrams are ready for the submission:
 
-## Demo Flow
+- [`diagrams/dfm.png`](diagrams/dfm.png)
+- [`diagrams/er.png`](diagrams/er.png)
 
-Use this sequence for a short project demonstration:
+The completed report is [`docs/report.md`](docs/report.md). Supporting
+documentation covers the data model, diagram sources, validation, graph model,
+and analysis findings.
+
+## Demo flow
 
 ```bash
 docker compose ps
-docker exec -it nyc_taxi_postgres psql -U taxi -d nyc_taxi_dw -c "\dt"
-docker exec -it nyc_taxi_postgres psql -U taxi -d nyc_taxi_dw -c "SELECT COUNT(*) FROM fact_trip;"
+docker exec -it nyc_taxi_postgres psql -U taxi -d nyc_taxi_dw \
+  -c "SELECT COUNT(*) FROM fact_trip;"
 docker exec -i nyc_taxi_postgres psql -U taxi -d nyc_taxi_dw < sql/olap_queries.sql
+.venv/bin/python etl/export_neo4j_graph.py
+docker exec -i nyc_taxi_neo4j cypher-shell -u neo4j -p taxigraph2024 \
+  -d neo4j < neo4j/load_graph.cypher
 ```
 
-Then show:
+Then show the diagrams, run G1 in Neo4j Browser, and use the report's findings
+to explain how the graph complements the OLAP analysis.
 
-- Power BI dashboard built from `output/result_q*.csv`
-- `docs/data_model.md` for the star schema explanation
-- `docs/validation.md` for row-count checks
-- `docs/report.md` as the living report draft
+## Project structure
 
----
-
-## Star Schema
-
-```
-                    DimTime
-                   (time_id)
-                       │
-DimService ─────── FactTrip ─────── DimPickupLocation
-(service_id)      (trip_id)         (location_id)
-                       │
-              DimDropoffLocation    DimPayment
-              (location_id)         (payment_id)
-```
-
-**Grain:** one row = one taxi trip.
-
-**Measures:** `fare_amount` · `tip_amount` · `total_amount` · `trip_distance` · `passenger_count` · `trip_duration`
-
----
-
-## Project Structure
-
-```
+```text
 nyc-taxi-dw/
-├── docker-compose.yml      ← PostgreSQL 16 + Adminer
-├── requirements.txt
-├── etl/
-│   ├── download.py         ← fetch raw Parquet files
-│   ├── clean.py            ← cleaning & transformation
-│   ├── load.py             ← populate all DB tables
-│   └── export_olap_results.py ← export query CSVs
-├── sql/
-│   ├── ddl.sql             ← CREATE TABLE statements
-│   └── olap_queries.sql    ← 12 OLAP queries
-├── docs/
-│   ├── data_model.md       ← star schema and cleaning notes
-│   ├── validation.md       ← row-count checks
-│   ├── powerbi_notes.md    ← Power BI chart mapping
-│   ├── report.md           ← report draft
-│   ├── figures/            ← report figures
-│   └── report/             ← final report source
-├── output/result_q*.csv    ← OLAP exports for Power BI (git-ignored)
-├── output/charts/          ← exported Power BI chart images (git-ignored)
-├── diagrams/
-│   ├── dfm.png             ← pending: Dimensional Fact Model
-│   └── er.png              ← pending: Entity-Relationship diagram
-├── data/raw/               ← Parquet files (git-ignored)
-└── data/clean/             ← cleaned data (git-ignored)
+|- docker-compose.yml
+|- etl/
+|  |- clean.py
+|  |- download.py
+|  |- load.py
+|  |- export_olap_results.py
+|  `- export_neo4j_graph.py
+|- sql/
+|  |- ddl.sql
+|  `- olap_queries.sql
+|- neo4j/
+|  |- load_graph.cypher
+|  |- exploration_queries.cypher
+|  |- graph_model.md
+|  `- import/                 generated CSVs, ignored by Git
+|- diagrams/
+|  |- dfm.svg and dfm.png
+|  `- er.svg and er.png
+|- docs/
+|  |- architecture.md
+|  |- data_model.md
+|  |- diagrams.md
+|  |- graph_analysis.md
+|  |- neo4j_notes.md
+|  |- report.md
+|  `- validation.md
+|- data/raw/                  ignored raw data
+|- data/clean/                ignored cleaned data
+`- output/                    ignored OLAP CSV exports
 ```
 
----
-
-## Stopping the Database
+## Stop services
 
 ```bash
-docker compose down          # stop, keep data
-docker compose down -v       # stop and delete all data
+docker compose down
 ```
+
+This preserves PostgreSQL and Neo4j data volumes. `docker compose down -v`
+removes both databases and should only be used when a complete rebuild is
+intended.
