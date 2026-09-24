@@ -1,11 +1,11 @@
 // Graph exploration queries for Neo4j Browser and the project report.
 
-// G1. Visualize the 100 busiest pickup-to-dropoff corridors.
-MATCH (pickup:PickupZone)-[flow:TRIPS_TO]->(dropoff:DropoffZone)
-WITH pickup, flow, dropoff
+// G1. Visualize JFK Airport's busiest corridors into Manhattan in Neo4j Browser.
+MATCH (pickup:PickupZone {zone: 'JFK Airport'})-[flow:TRIPS_TO]->
+      (dropoff:DropoffZone {borough: 'Manhattan'})
+RETURN pickup, flow, dropoff
 ORDER BY flow.trip_count DESC
-LIMIT 100
-RETURN pickup, flow, dropoff;
+LIMIT 20;
 
 // G2. Top 10 corridors by trip count and total revenue.
 MATCH (pickup:PickupZone)-[flow:TRIPS_TO]->(dropoff:DropoffZone)
