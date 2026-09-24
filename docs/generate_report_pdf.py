@@ -232,7 +232,20 @@ def main():
             body,
         )
     )
-    story += section_title("4. Neo4j Graph Layer", h1)
+    story += section_title("4. Supporting OLAP Visualizations", h1)
+    story.append(image(ROOT / "docs" / "figures" / "pickup_hubs.png", 16.5 * cm, 9.2 * cm))
+    story.append(paragraph("Figure 3. Top pickup hubs by trip volume.", caption))
+    story.append(image(ROOT / "docs" / "figures" / "payment_mix_top_zones.png", 16.5 * cm, 8.8 * cm))
+    story.append(paragraph("Figure 4. Payment mix at the five busiest pickup hubs.", caption))
+    story.append(PageBreak())
+
+    story.append(image(ROOT / "docs" / "figures" / "vendor_revenue_by_month.png", 16.5 * cm, 9.0 * cm))
+    story.append(paragraph("Figure 5. Monthly revenue by vendor.", caption))
+    story.append(image(ROOT / "docs" / "figures" / "hourly_demand_by_day_type.png", 16.5 * cm, 9.0 * cm))
+    story.append(paragraph("Figure 6. Average daily taxi demand by pickup hour.", caption))
+    story.append(PageBreak())
+
+    story += section_title("5. Neo4j Graph Layer", h1)
     story.append(
         paragraph(
             "Neo4j receives aggregates exported from PostgreSQL rather than individual "
@@ -244,10 +257,10 @@ def main():
         )
     )
     story.append(image(ROOT / "docs" / "figures" / "neo4j_jfk_manhattan.png", 16.5 * cm, 12 * cm))
-    story.append(paragraph("Figure 3. Top JFK Airport to Manhattan corridors from Neo4j G1.", caption))
+    story.append(paragraph("Figure 7. Top JFK Airport to Manhattan corridors from Neo4j G1.", caption))
     story.append(PageBreak())
 
-    story += section_title("5. Results and Interpretation", h1)
+    story += section_title("6. Results and Interpretation", h1)
     results = [
         ["Finding", "Evidence"],
         ["Busiest corridor", "Upper East Side South to Upper East Side North: 61,421 trips and $958,770.89 revenue."],
@@ -267,7 +280,7 @@ def main():
             body,
         )
     )
-    story += section_title("6. Reproducibility", h1)
+    story += section_title("7. Reproducibility", h1)
     story.append(
         paragraph(
             "Run the warehouse ETL, execute sql/olap_queries.sql, then run "
@@ -277,7 +290,7 @@ def main():
             body,
         )
     )
-    story += section_title("7. Conclusion", h1)
+    story += section_title("8. Conclusion", h1)
     story.append(
         paragraph(
             "The project implements the proposed warehouse workflow end to end: source "

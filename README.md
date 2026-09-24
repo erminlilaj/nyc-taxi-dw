@@ -142,9 +142,10 @@ and as editable source in [`docs/report.md`](docs/report.md). Supporting
 documentation covers the data model, diagram sources, validation, graph model,
 and analysis findings.
 
-Regenerate the PDF after changing report content with:
+Regenerate the analytical figures and PDF after changing report content with:
 
 ```bash
+.venv/bin/python docs/generate_analysis_figures.py
 .venv/bin/python docs/generate_report_pdf.py
 ```
 

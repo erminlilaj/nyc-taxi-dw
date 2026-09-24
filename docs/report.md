@@ -72,6 +72,22 @@ The result sets are reproducibly exported by `etl/export_olap_results.py`.
 Their row counts and warehouse validation checks are documented in
 `docs/validation.md`.
 
+### Supporting analytical figures
+
+The top pickup hubs are concentrated in Manhattan, with Midtown Center leading
+overall and JFK Airport the largest non-Manhattan source. Credit card is the
+dominant payment method at every one of the five busiest hubs. Vendor revenue
+increases in March, and weekday demand has a stronger evening peak than weekend
+demand.
+
+![Top pickup hubs](figures/pickup_hubs.png)
+
+![Payment mix at pickup hubs](figures/payment_mix_top_zones.png)
+
+![Vendor revenue by month](figures/vendor_revenue_by_month.png)
+
+![Hourly demand by day type](figures/hourly_demand_by_day_type.png)
+
 ## 6. Neo4j graph analysis
 
 Neo4j is intentionally a derived layer. The script
