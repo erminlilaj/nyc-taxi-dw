@@ -100,6 +100,8 @@ returns a focused JFK-to-Manhattan graph suitable for Neo4j Browser's graph
 view. The complete counts, commands, and findings are in
 `docs/graph_analysis.md`.
 
+![JFK Airport to Manhattan Neo4j graph](figures/neo4j_jfk_manhattan.png)
+
 ## 7. Interpretation
 
 PostgreSQL and Neo4j answer complementary analytical questions. The star

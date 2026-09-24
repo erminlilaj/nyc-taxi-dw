@@ -40,6 +40,8 @@ LIMIT 20;
 Neo4j Browser can export the visible graph through the **Download as PNG**
 control. The query is also stored as G1 in `neo4j/exploration_queries.cypher`.
 
+![JFK Airport to Manhattan Neo4j graph](figures/neo4j_jfk_manhattan.png)
+
 ## Findings
 
 The graph queries identify these notable patterns:

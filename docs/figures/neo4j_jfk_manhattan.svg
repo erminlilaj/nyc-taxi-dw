@@ -1,0 +1,51 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1400" height="1000" viewBox="0 0 1400 1000" role="img" aria-labelledby="title desc">
+  <title id="title">Neo4j JFK Airport to Manhattan corridors</title>
+  <desc id="desc">The ten busiest graph relationships from JFK Airport pickup zone to Manhattan dropoff zones, weighted by trip count.</desc>
+  <defs>
+    <marker id="arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#425466"/>
+    </marker>
+    <style>
+      .title { font-family: Arial, sans-serif; font-size: 33px; font-weight: 700; fill: #172033; }
+      .subtitle { font-family: Arial, sans-serif; font-size: 17px; fill: #526172; }
+      .zone { font-family: Arial, sans-serif; font-size: 18px; font-weight: 700; fill: #172033; }
+      .count { font-family: Arial, sans-serif; font-size: 15px; fill: #526172; }
+      .label { font-family: Arial, sans-serif; font-size: 14px; font-weight: 700; fill: #425466; }
+    </style>
+  </defs>
+  <rect width="1400" height="1000" fill="#f8fafc"/>
+  <text x="70" y="70" class="title">Neo4j Graph View: JFK Airport to Manhattan</text>
+  <text x="70" y="104" class="subtitle">Top 10 TRIPS_TO relationships by trip count, January-March 2024</text>
+
+  <g transform="translate(100 385)">
+    <circle cx="145" cy="105" r="104" fill="#9bd7ef" stroke="#267dad" stroke-width="3"/>
+    <text x="145" y="91" text-anchor="middle" class="zone">JFK Airport</text>
+    <text x="145" y="119" text-anchor="middle" class="count">PickupZone</text>
+    <text x="145" y="145" text-anchor="middle" class="count">400,263 total trips</text>
+  </g>
+
+  <g fill="none" stroke="#425466" marker-end="url(#arrow)">
+    <path d="M 350 440 C 520 100, 675 150, 885 150" stroke-width="5"/>
+    <path d="M 350 455 C 530 210, 675 235, 885 235" stroke-width="3.7"/>
+    <path d="M 350 470 C 535 305, 675 320, 885 320" stroke-width="3.6"/>
+    <path d="M 350 480 C 535 390, 675 405, 885 405" stroke-width="3.1"/>
+    <path d="M 350 490 C 535 475, 675 490, 885 490" stroke-width="3"/>
+    <path d="M 350 500 C 535 560, 675 575, 885 575" stroke-width="2.9"/>
+    <path d="M 350 510 C 535 645, 675 660, 885 660" stroke-width="2.7"/>
+    <path d="M 350 520 C 535 730, 675 745, 885 745" stroke-width="2.6"/>
+    <path d="M 350 530 C 535 815, 675 830, 885 830" stroke-width="2.4"/>
+    <path d="M 350 540 C 535 900, 675 915, 885 915" stroke-width="2.4"/>
+  </g>
+
+  <g transform="translate(910 110)"><rect width="370" height="80" rx="8" fill="#d9f5ef" stroke="#159a8a" stroke-width="2"/><text x="20" y="33" class="zone">Times Sq/Theatre District</text><text x="20" y="60" class="count">18,669 trips</text></g>
+  <g transform="translate(910 195)"><rect width="370" height="80" rx="8" fill="#d9f5ef" stroke="#159a8a" stroke-width="2"/><text x="20" y="33" class="zone">Midtown South</text><text x="20" y="60" class="count">10,026 trips</text></g>
+  <g transform="translate(910 280)"><rect width="370" height="80" rx="8" fill="#d9f5ef" stroke="#159a8a" stroke-width="2"/><text x="20" y="33" class="zone">Clinton East</text><text x="20" y="60" class="count">9,988 trips</text></g>
+  <g transform="translate(910 365)"><rect width="370" height="80" rx="8" fill="#d9f5ef" stroke="#159a8a" stroke-width="2"/><text x="20" y="33" class="zone">Midtown Center</text><text x="20" y="60" class="count">7,908 trips</text></g>
+  <g transform="translate(910 450)"><rect width="370" height="80" rx="8" fill="#d9f5ef" stroke="#159a8a" stroke-width="2"/><text x="20" y="33" class="zone">Midtown North</text><text x="20" y="60" class="count">7,830 trips</text></g>
+  <g transform="translate(910 535)"><rect width="370" height="80" rx="8" fill="#d9f5ef" stroke="#159a8a" stroke-width="2"/><text x="20" y="33" class="zone">Murray Hill</text><text x="20" y="60" class="count">7,439 trips</text></g>
+  <g transform="translate(910 620)"><rect width="370" height="80" rx="8" fill="#d9f5ef" stroke="#159a8a" stroke-width="2"/><text x="20" y="33" class="zone">East Chelsea</text><text x="20" y="60" class="count">6,836 trips</text></g>
+  <g transform="translate(910 705)"><rect width="370" height="80" rx="8" fill="#d9f5ef" stroke="#159a8a" stroke-width="2"/><text x="20" y="33" class="zone">Midtown East</text><text x="20" y="60" class="count">6,551 trips</text></g>
+  <g transform="translate(910 790)"><rect width="370" height="80" rx="8" fill="#d9f5ef" stroke="#159a8a" stroke-width="2"/><text x="20" y="33" class="zone">Upper West Side South</text><text x="20" y="60" class="count">5,645 trips</text></g>
+  <g transform="translate(910 875)"><rect width="370" height="80" rx="8" fill="#d9f5ef" stroke="#159a8a" stroke-width="2"/><text x="20" y="33" class="zone">Upper East Side North</text><text x="20" y="60" class="count">5,447 trips</text></g>
+  <text x="90" y="935" class="label">Relationship width is scaled by trip count. Source: Neo4j G1, loaded from PostgreSQL aggregates.</text>
+</svg>
