@@ -115,6 +115,11 @@
       content: "";
     }
 
+    .slide--blue .content { background: #f7faff; }
+    .slide--blue .content::before { background: var(--blue); }
+    .slide--teal .content { background: #f4fbfa; }
+    .slide--teal .content::before { background: var(--teal); }
+
     .eyebrow {
       margin: 0 0 0.7rem;
       color: var(--sapienza);
@@ -232,6 +237,30 @@
 
     .card p, .finding p { margin-bottom: 0; }
 
+    .tag {
+      display: inline-block;
+      margin-bottom: 0.6rem;
+      color: var(--sapienza);
+      font-size: clamp(0.61rem, 0.76vw, 0.76rem);
+      font-weight: 800;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    .why-strip {
+      width: 100%;
+      max-width: 70rem;
+      margin: 1rem 0 0;
+      padding: 0.85rem 1rem;
+      border-left: 5px solid var(--orange);
+      background: rgba(255, 255, 255, 0.7);
+      color: var(--ink);
+      font-size: clamp(0.9rem, 1.08vw, 1.14rem);
+      line-height: 1.4;
+    }
+
+    .why-strip b { color: var(--sapienza); }
+
     .diagram {
       display: block;
       width: 100%;
@@ -240,6 +269,36 @@
       object-fit: contain;
       object-position: left center;
     }
+
+    .diagram--compact { max-height: min(43vh, 395px); }
+
+    .model-layout, .insight-layout {
+      display: grid;
+      grid-template-columns: minmax(0, 1.9fr) minmax(12rem, 0.8fr);
+      align-items: center;
+      gap: clamp(1.2rem, 3vw, 3.2rem);
+      width: 100%;
+    }
+
+    .model-layout .diagram { margin: 0; }
+
+    .side-insight {
+      padding: 0.9rem 0 0 1rem;
+      border-left: 3px solid var(--teal);
+    }
+
+    .side-insight p { margin-bottom: 0.85rem; color: var(--muted); font-size: clamp(0.82rem, 1.02vw, 1.04rem); line-height: 1.38; }
+
+    .side-stat {
+      display: block;
+      margin-top: 0.9rem;
+      color: var(--sapienza);
+      font-family: Georgia, "Times New Roman", serif;
+      font-size: clamp(1.65rem, 2.35vw, 2.7rem);
+      line-height: 0.95;
+    }
+
+    .side-stat + span { display: block; margin-top: 0.35rem; color: var(--muted); font-size: 0.86rem; line-height: 1.3; }
 
     .architecture {
       display: grid;
@@ -323,6 +382,10 @@
 
     .chart-wrap { width: 100%; margin-top: 0.15rem; }
 
+    .insight-layout { margin-top: 0.2rem; align-items: stretch; }
+    .insight-layout figure { min-width: 0; margin: 0; }
+    .insight-layout .chart { max-height: min(48vh, 440px); }
+
     .chart {
       display: block;
       width: 100%;
@@ -341,6 +404,15 @@
     .chart-grid figure { min-width: 0; margin: 0; }
     .chart-grid .chart { max-height: min(41vh, 360px); }
     figcaption { margin-top: 0.45rem; color: var(--muted); font-size: clamp(0.75rem, 0.9vw, 0.9rem); line-height: 1.35; }
+
+    .chart-note {
+      margin-top: 0.65rem;
+      padding-top: 0.55rem;
+      border-top: 2px solid var(--line);
+      color: var(--ink);
+      font-size: clamp(0.78rem, 0.93vw, 0.94rem);
+      line-height: 1.35;
+    }
 
     .quote {
       max-width: 52rem;
@@ -396,6 +468,8 @@
       .architecture-step { min-height: 8.5rem; }
       .architecture-step::after { display: none; }
       .process, .chart-grid { grid-template-columns: 1fr; }
+      .model-layout, .insight-layout { grid-template-columns: 1fr; gap: 0.8rem; }
+      .side-insight { padding: 0.8rem 0 0 0.85rem; }
       .diagram, .chart { max-height: 42vh; }
       .cover-logo { width: min(82vw, 520px); }
     }
@@ -418,21 +492,22 @@
       </div>
     </section>
 
-    <section class="slide" data-section="Objective">
+    <section class="slide slide--blue" data-section="Objective">
       <aside class="rail"><img class="rail-mark" src="assets/sapienza-logo.png" alt="Sapienza Universita di Roma"><p class="rail-section">01 / Objective</p><p class="rail-number">02</p></aside>
       <div class="content">
         <p class="eyebrow">The question</p>
-        <h2>How can NYC taxi trips become reliable analytical evidence?</h2>
-        <p class="lede">We transformed raw operational trip records into a warehouse that supports repeatable questions about demand, revenue, payments, vendors, and movement between city zones.</p>
+        <h2>Raw trip records are not yet analytical evidence.</h2>
+        <p class="lede">Taxi operations create millions of detailed records. We needed one reliable model that turns them into repeatable questions about demand, revenue, payments, vendors, and city movement.</p>
         <div class="card-grid">
-          <article class="card"><h3>Build</h3><p>A validated PostgreSQL star schema at one-trip grain.</p></article>
-          <article class="card"><h3>Analyze</h3><p>Twelve OLAP queries covering roll-up, drill-down, slice, dice, ranking, and windows.</p></article>
-          <article class="card"><h3>Explore</h3><p>A compact Neo4j graph derived from warehouse aggregates, never raw trip nodes.</p></article>
+          <article class="card"><span class="tag">Why a warehouse</span><h3>Consistent definitions</h3><p>Measures and dimensions are defined once, so every query uses the same cleaned business logic.</p></article>
+          <article class="card"><span class="tag">Why OLAP</span><h3>Repeatable questions</h3><p>SQL supports the same drill-down and comparison questions without manual recalculation.</p></article>
+          <article class="card"><span class="tag">Why a graph</span><h3>Visible connections</h3><p>Aggregated routes reveal how locations, payments, vendors, and demand are related.</p></article>
         </div>
+        <p class="why-strip"><b>Project goal:</b> move from isolated source rows to a governed analytical model that is simple to query, validate, and explain.</p>
       </div>
     </section>
 
-    <section class="slide" data-section="Architecture">
+    <section class="slide slide--teal" data-section="Architecture">
       <aside class="rail"><img class="rail-mark" src="assets/sapienza-logo.png" alt="Sapienza Universita di Roma"><p class="rail-section">02 / Architecture</p><p class="rail-number">03</p></aside>
       <div class="content">
         <p class="eyebrow">Two complementary layers</p>
@@ -443,7 +518,7 @@
           <article class="architecture-step"><span class="index">03</span><h3>PostgreSQL</h3><p>The authoritative dimensional warehouse and OLAP query engine.</p></article>
           <article class="architecture-step"><span class="index">04</span><h3>Neo4j</h3><p>A derived aggregate graph for route and relationship exploration.</p></article>
         </div>
-        <p class="quote">PostgreSQL answers dimensional questions. Neo4j makes the connections visible.</p>
+        <p class="why-strip"><b>Why two layers?</b> PostgreSQL keeps complete trip-level detail for OLAP; Neo4j receives only curated aggregates where relationships are the question.</p>
       </div>
     </section>
 
@@ -451,11 +526,11 @@
       <aside class="rail"><img class="rail-mark" src="assets/sapienza-logo.png" alt="Sapienza Universita di Roma"><p class="rail-section">03 / Dataset</p><p class="rail-number">04</p></aside>
       <div class="content">
         <p class="eyebrow">Source and scope</p>
-        <h2>NYC TLC Yellow Taxi trips, focused on Q1 2024.</h2>
+        <h2>A focused three-month dataset makes the project testable end to end.</h2>
         <div class="process">
           <div>
-            <p class="lede">The source combines trip-level operational data with a Taxi Zone Lookup table. The warehouse preserves the information needed for time, geography, payment, service, and revenue analysis.</p>
-            <p class="small-note">Study period: January, February, and March 2024.</p>
+            <p class="lede">The source combines trip-level operational data with a Taxi Zone Lookup table. It is rich enough to study time, geography, payment, service, and revenue while remaining reproducible on a local analytical stack.</p>
+            <p class="why-strip"><b>Why this scope?</b> Q1 2024 provides seasonal and weekday/weekend variation without hiding the full ETL and validation workflow behind an oversized sample.</p>
           </div>
           <table class="data-table" aria-label="Dataset preparation counts">
             <thead><tr><th>Stage</th><th>Trips</th></tr></thead>
@@ -470,11 +545,11 @@
       </div>
     </section>
 
-    <section class="slide" data-section="Data quality">
+    <section class="slide slide--blue" data-section="Data quality">
       <aside class="rail"><img class="rail-mark" src="assets/sapienza-logo.png" alt="Sapienza Universita di Roma"><p class="rail-section">03 / Dataset</p><p class="rail-number">05</p></aside>
       <div class="content">
         <p class="eyebrow">Data quality controls</p>
-        <h2>Cleaning rules turn operational records into trustworthy measures.</h2>
+        <h2>Cleaning rules protect every conclusion made later.</h2>
         <div class="process">
           <ol class="process-list">
             <li><b>01</b><span>Keep pickups in the defined January–March 2024 window.</span></li>
@@ -484,8 +559,9 @@
             <li><b>05</b><span>Normalize missing tip values to zero before aggregation.</span></li>
           </ol>
           <div>
-            <p class="quote">8.45 million cleaned trips form the auditable analytical base.</p>
-            <p class="lede">Dimensions load before facts; constraints and row-count checks verify the star-schema contract after loading.</p>
+            <p class="quote">8.45 million cleaned trips form the analytical base.</p>
+            <p class="lede">Without these controls, invalid distances, fares, timestamps, or locations would distort rankings, averages, and route aggregates.</p>
+            <p class="why-strip"><b>Why load dimensions first?</b> Facts can then reference validated, reusable dimension keys and PostgreSQL can enforce the warehouse contract.</p>
           </div>
         </div>
       </div>
@@ -496,12 +572,14 @@
       <div class="content">
         <p class="eyebrow">Dimensional Fact Model</p>
         <h2>One fact row represents one cleaned taxi trip.</h2>
-        <p class="lede">Trip measures include fare, tip, total amount, distance, passenger count, and duration. Five dimensions enable analysis by time, pickup, drop-off, payment, and service.</p>
-        <img class="diagram" src="../../diagrams/dfm.png" alt="Dimensional fact model for the taxi trip warehouse">
+        <div class="model-layout">
+          <img class="diagram diagram--compact" src="../../diagrams/dfm.png" alt="Dimensional fact model for the taxi trip warehouse">
+          <aside class="side-insight"><span class="tag">Why this model</span><h3>Trip grain preserves flexibility.</h3><p>Every measure remains traceable to a single trip while dimensions support aggregation at day, zone, borough, payment, and vendor levels.</p><h3>Role-playing locations matter.</h3><p>Separate pickup and drop-off dimensions let the same zone act as an origin or a destination without ambiguity.</p></aside>
+        </div>
       </div>
     </section>
 
-    <section class="slide" data-section="Star schema">
+    <section class="slide slide--teal" data-section="Star schema">
       <aside class="rail"><img class="rail-mark" src="assets/sapienza-logo.png" alt="Sapienza Universita di Roma"><p class="rail-section">04 / Warehouse design</p><p class="rail-number">07</p></aside>
       <div class="content">
         <p class="eyebrow">Physical PostgreSQL model</p>
@@ -512,21 +590,22 @@
           <article class="metric"><strong>265 + 265</strong><span>pickup and drop-off zones</span></article>
           <article class="metric"><strong>8.45M</strong><span>fact rows</span></article>
         </div>
-        <img class="diagram" src="../../diagrams/er.png" alt="Physical PostgreSQL star schema">
+        <p class="why-strip"><b>Why a star schema?</b> It keeps joins predictable and measures central, making analytical SQL easier to write, verify, and optimize than a raw operational layout.</p>
+        <img class="diagram diagram--compact" src="../../diagrams/er.png" alt="Physical PostgreSQL star schema">
       </div>
     </section>
 
-    <section class="slide" data-section="OLAP">
+    <section class="slide slide--blue" data-section="OLAP">
       <aside class="rail"><img class="rail-mark" src="assets/sapienza-logo.png" alt="Sapienza Universita di Roma"><p class="rail-section">05 / OLAP analysis</p><p class="rail-number">08</p></aside>
       <div class="content">
         <p class="eyebrow">Analytical query suite</p>
         <h2>Twelve SQL queries answer complementary business questions.</h2>
         <div class="card-grid">
-          <article class="card"><h3>Roll-up & drill-down</h3><p>Demand and revenue across hour, day, month, borough, and zone levels.</p></article>
-          <article class="card"><h3>Slice & dice</h3><p>Focused views across payments, trip length, duration, geography, and vendor.</p></article>
-          <article class="card"><h3>Ranking & windows</h3><p>Top locations, peak periods, and comparative vendor trends.</p></article>
+          <article class="card"><span class="tag">Why hierarchies</span><h3>Roll-up & drill-down</h3><p>Demand and revenue across hour, day, month, borough, and zone levels.</p></article>
+          <article class="card"><span class="tag">Why dimensions</span><h3>Slice & dice</h3><p>Focused views across payments, trip length, duration, geography, and vendor.</p></article>
+          <article class="card"><span class="tag">Why comparison</span><h3>Ranking & windows</h3><p>Top locations, peak periods, and comparative vendor trends.</p></article>
         </div>
-        <p class="quote">Each result is SQL-first, exportable, and reproducible from the warehouse.</p>
+        <p class="why-strip"><b>Why SQL first?</b> Query logic stays visible and version controlled; charts become direct outputs of the warehouse instead of hand-built summaries.</p>
       </div>
     </section>
 
@@ -536,30 +615,36 @@
         <p class="eyebrow">Reproducibility and validation</p>
         <h2>The analysis can be rebuilt, checked, and explained.</h2>
         <div class="finding-grid">
-          <article class="finding"><h3>Traceable pipeline</h3><p>Download, clean, dimensional load, OLAP export, graph aggregation, and graph loading are all executable project steps.</p></article>
-          <article class="finding"><h3>Warehouse checks</h3><p>Fact and dimension row counts, keys, and constraints verify that loading completed correctly.</p></article>
-          <article class="finding"><h3>Version-controlled figures</h3><p>Charts are created by Python queries against PostgreSQL rather than manually edited screenshots.</p></article>
-          <article class="finding"><h3>Derived graph only</h3><p>Neo4j aggregates are regenerated from PostgreSQL, preserving an audit path to the source of truth.</p></article>
+          <article class="finding"><span class="tag">Why traceability</span><h3>Executable pipeline</h3><p>Download, clean, dimensional load, OLAP export, graph aggregation, and graph loading are all project steps.</p></article>
+          <article class="finding"><span class="tag">Why checks</span><h3>Warehouse validation</h3><p>Fact and dimension row counts, keys, and constraints verify that loading completed correctly.</p></article>
+          <article class="finding"><span class="tag">Why code-generated charts</span><h3>Reproducible figures</h3><p>Charts come from Python queries against PostgreSQL rather than manually edited screenshots.</p></article>
+          <article class="finding"><span class="tag">Why a derived graph</span><h3>Auditable relationships</h3><p>Neo4j aggregates are regenerated from PostgreSQL, preserving a route back to the source of truth.</p></article>
         </div>
-        <p class="quote">Reproducibility is part of the deliverable, not an afterthought.</p>
+        <p class="why-strip"><b>Result:</b> another reviewer can follow the same scripts and recover the warehouse, figures, and graph from the same data inputs.</p>
       </div>
     </section>
 
-    <section class="slide" data-section="Insight 1">
+    <section class="slide slide--teal" data-section="Insight 1">
       <aside class="rail"><img class="rail-mark" src="assets/sapienza-logo.png" alt="Sapienza Universita di Roma"><p class="rail-section">06 / Findings</p><p class="rail-number">10</p></aside>
       <div class="content">
         <p class="eyebrow">OLAP finding / Geography</p>
-        <h2>Taxi demand concentrates in Manhattan, with JFK as the key exception.</h2>
-        <figure class="chart-wrap"><img class="chart" src="../figures/pickup_hubs.png" alt="Bar chart of the top ten pickup hubs by trip volume"><figcaption>Midtown Center leads overall, while JFK Airport is the largest non-Manhattan pickup source.</figcaption></figure>
+        <h2>Where does NYC taxi demand begin?</h2>
+        <div class="insight-layout">
+          <figure><img class="chart" src="../figures/pickup_hubs.png" alt="Bar chart of the top ten pickup hubs by trip volume"><figcaption>Midtown Center leads overall, while JFK Airport is the largest non-Manhattan pickup source.</figcaption></figure>
+          <aside class="side-insight"><span class="tag">Why rank hubs</span><h3>Volume identifies the locations that shape the system.</h3><p>Ranking pickup zones reveals where demand is concentrated and where a small set of areas accounts for a large share of trips.</p><strong class="side-stat">417,379</strong><span>trips start in Midtown Center</span><strong class="side-stat">400,263</strong><span>trips start at JFK Airport</span></aside>
+        </div>
       </div>
     </section>
 
-    <section class="slide" data-section="Insight 2">
+    <section class="slide slide--blue" data-section="Insight 2">
       <aside class="rail"><img class="rail-mark" src="assets/sapienza-logo.png" alt="Sapienza Universita di Roma"><p class="rail-section">06 / Findings</p><p class="rail-number">11</p></aside>
       <div class="content">
         <p class="eyebrow">OLAP finding / Payments</p>
-        <h2>Credit card payments dominate at the busiest pickup hubs.</h2>
-        <figure class="chart-wrap"><img class="chart" src="../figures/payment_mix_top_zones.png" alt="Stacked bar chart of payment mix at the five busiest pickup hubs"><figcaption>The pattern is consistent across the highest-volume pickup zones, supporting payment-based slicing in the warehouse.</figcaption></figure>
+        <h2>How do riders pay at the busiest hubs?</h2>
+        <div class="insight-layout">
+          <figure><img class="chart" src="../figures/payment_mix_top_zones.png" alt="Stacked bar chart of payment mix at the five busiest pickup hubs"><figcaption>Credit card is the dominant method at each of the five highest-volume pickup zones.</figcaption></figure>
+          <aside class="side-insight"><span class="tag">Why payment mix</span><h3>Payment is both a behavior and a measure.</h3><p>Adding payment as a dimension lets the warehouse compare rider behavior across locations, time periods, and trip characteristics.</p><p>Here, the pattern is stable: cash is secondary even at very different pickup locations.</p></aside>
+        </div>
       </div>
     </section>
 
@@ -569,13 +654,13 @@
         <p class="eyebrow">OLAP finding / Time and revenue</p>
         <h2>Revenue and demand reveal distinct time patterns.</h2>
         <div class="chart-grid">
-          <figure><img class="chart" src="../figures/vendor_revenue_by_month.png" alt="Line chart of monthly revenue by vendor"><figcaption>Both vendors reach their highest revenue in March.</figcaption></figure>
-          <figure><img class="chart" src="../figures/hourly_demand_by_day_type.png" alt="Line chart of hourly weekday and weekend demand"><figcaption>Weekday demand has the stronger evening peak, especially around 18:00.</figcaption></figure>
+          <figure><img class="chart" src="../figures/vendor_revenue_by_month.png" alt="Line chart of monthly revenue by vendor"><figcaption>Both vendors reach their highest revenue in March.</figcaption><p class="chart-note"><b>Why compare vendors?</b> It confirms that the time dimension supports a consistent month-over-month revenue view across service providers.</p></figure>
+          <figure><img class="chart" src="../figures/hourly_demand_by_day_type.png" alt="Line chart of hourly weekday and weekend demand"><figcaption>Weekday demand has the stronger evening peak, especially around 18:00.</figcaption><p class="chart-note"><b>Why split weekdays and weekends?</b> The same hour has a different demand profile depending on the day type.</p></figure>
         </div>
       </div>
     </section>
 
-    <section class="slide" data-section="Neo4j">
+    <section class="slide slide--teal" data-section="Neo4j">
       <aside class="rail"><img class="rail-mark" src="assets/sapienza-logo.png" alt="Sapienza Universita di Roma"><p class="rail-section">07 / Graph analysis</p><p class="rail-number">13</p></aside>
       <div class="content">
         <p class="eyebrow">Neo4j as a derived layer</p>
@@ -586,22 +671,26 @@
           <article class="metric"><strong>TRIPS_TO</strong><span>directional taxi corridors</span></article>
           <article class="metric"><strong>G1</strong><span>JFK-to-Manhattan graph view</span></article>
         </div>
-        <img class="diagram" src="../figures/neo4j_jfk_manhattan.png" alt="Neo4j graph view of JFK Airport to Manhattan corridors">
+        <p class="why-strip"><b>Why aggregate before graph loading?</b> A node for every trip would add 8.4 million low-value entities. Aggregate relationships retain counts, revenue, distance, and direction while keeping graph exploration responsive.</p>
+        <img class="diagram diagram--compact" src="../figures/neo4j_jfk_manhattan.png" alt="Neo4j graph view of JFK Airport to Manhattan corridors">
       </div>
     </section>
 
-    <section class="slide" data-section="Project design">
+    <section class="slide slide--blue" data-section="Project design">
       <aside class="rail"><img class="rail-mark" src="assets/sapienza-logo.png" alt="Sapienza Universita di Roma"><p class="rail-section">08 / Project design</p><p class="rail-number">14</p></aside>
       <div class="content">
-        <p class="eyebrow">Design rationale</p>
-        <h2>Architecture decisions and project scope.</h2>
-        <div class="finding-grid">
-          <article class="finding"><h3>Warehouse first</h3><p>PostgreSQL retains trip-level facts, conformed dimensions, constraints, and all OLAP responsibility.</p></article>
-          <article class="finding"><h3>Neo4j has a focused role</h3><p>The graph receives only aggregates, making route direction and connected-location patterns easy to inspect.</p></article>
-          <article class="finding"><h3>Evidence is reproducible</h3><p>ETL, SQL, graph export/load, figures, diagrams, and report generation are all in the repository.</p></article>
-          <article class="finding"><h3>Known limitations are explicit</h3><p>The study covers one taxi service and three months; it is not presented as a citywide causal model.</p></article>
-        </div>
-        <p class="quote">PostgreSQL is the source of truth and OLAP engine; Neo4j is the relationship-focused analytical extension.</p>
+        <p class="eyebrow">Architecture decisions</p>
+        <h2>Each tool has a clear, limited responsibility.</h2>
+        <table class="data-table" aria-label="Architecture decisions and reasons">
+          <thead><tr><th>Decision</th><th>Why we made it</th><th>Result</th></tr></thead>
+          <tbody>
+            <tr><td>PostgreSQL star schema</td><td>Keeps detailed measures and dimensions together for OLAP.</td><td>Clear, repeatable analytical SQL.</td></tr>
+            <tr><td>Python ETL and figures</td><td>Makes cleaning and visual evidence version controlled.</td><td>Rebuildable results, not manual artifacts.</td></tr>
+            <tr><td>Neo4j aggregate graph</td><td>Routes and connections are easier to inspect as relationships.</td><td>Focused graph exploration without duplicating the warehouse.</td></tr>
+            <tr><td>Three-month scope</td><td>Allows an end-to-end local implementation and validation.</td><td>Clear limits and reproducible execution.</td></tr>
+          </tbody>
+        </table>
+        <p class="why-strip"><b>Important boundary:</b> PostgreSQL remains the source of truth and OLAP engine. Neo4j is the relationship-focused analytical extension.</p>
       </div>
     </section>
 
@@ -610,7 +699,7 @@
       <div class="content">
         <p class="eyebrow">Conclusion</p>
         <h1>From raw trips to trustworthy analysis.</h1>
-        <p class="lede">A complete, validated warehouse; reproducible OLAP findings; and a graph layer that complements rather than replaces dimensional analysis.</p>
+        <p class="lede">A complete, validated warehouse; reproducible OLAP findings; and a graph layer that complements dimensional analysis without replacing the source of truth.</p>
         <div class="metric-grid">
           <article class="metric"><strong>8.45M</strong><span>cleaned taxi trips</span></article>
           <article class="metric"><strong>12</strong><span>OLAP queries</span></article>
